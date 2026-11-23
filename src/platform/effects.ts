@@ -2,7 +2,10 @@ import { h } from './dom';
 
 const COLORS = ['#FF5D8F', '#FFD23F', '#3DA5FF', '#4CC95B', '#7B5CFF', '#FF8A3D'];
 
-export function confetti(count = 60): void {
+/** Piece counts. Each piece is its own GPU layer, so keep these low for weak TV hardware. */
+export const CONFETTI = { small: 20, big: 40 } as const;
+
+export function confetti(count: number = CONFETTI.small): void {
   const layer = h('div', { class: 'confetti', 'aria-hidden': 'true' });
   for (let i = 0; i < count; i++) {
     const piece = h('i', {

@@ -129,7 +129,6 @@ function mount(stage: HTMLElement, ctx: GameContext): () => void {
   let selected = -1;
   let mistakes = 0;
   let hintsLeft = 3;
-  let alive = true;
 
   const show = (v: number) => (v === 0 ? '' : cfg.shapes ? SHAPES[v] : String(v));
 
@@ -142,9 +141,26 @@ function mount(stage: HTMLElement, ctx: GameContext): () => void {
     if ((r + 1) % cfg.br === 0 && r < n - 1) cls.push('bb');
     if ((Math.floor(r / cfg.br) + Math.floor(c / cfg.bc)) % 2 === 1) cls.push('alt');
     const el = h('button', { class: cls.join(' '), html: show(cells[i]), onClick: () => select(i) });
+    // Drop the flash class (and its delay) when done, so later animations on the cell are not blocked.
+    el.addEventListener('animationend', (e) => {
+      if (e.animationName !== 'sdk-flash') return;
+      el.classList.remove('flash');
+      el.style.animationDelay = '';
+    });
     board.append(el);
     return el;
   });
+
+  /** Flash cells with a single forced reflow (replay() per cell would force one layout each). */
+  function flash(idx: Iterable<number>, staggerMs = 0) {
+    const els = [...new Set(idx)].map((j) => cellEls[j]);
+    els.forEach((el) => el.classList.remove('flash'));
+    void board.offsetWidth;
+    els.forEach((el, k) => {
+      el.style.animationDelay = staggerMs ? `${k * staggerMs}ms` : '';
+      el.classList.add('flash');
+    });
+  }
 
   const palette = h(
     'div',
@@ -203,7 +219,7 @@ function mount(stage: HTMLElement, ctx: GameContext): () => void {
     const sameCol = [...cells.keys()].filter((j) => grid.col(j) === grid.col(i));
     const sameBox = [...cells.keys()].filter((j) => grid.box(j) === grid.box(i));
     for (const g of [sameRow, sameCol, sameBox]) if (g.every((j) => cells[j] !== 0)) groups.push(g);
-    groups.flat().forEach((j) => replay(cellEls[j], 'flash'));
+    if (groups.length) flash(groups.flat());
     selected = -1;
     refreshHighlights();
   }
@@ -257,9 +273,9 @@ function mount(stage: HTMLElement, ctx: GameContext): () => void {
   }
 
   function win() {
-    ctx.celebrate('big');
+    // No ctx.celebrate() here: the platform's result screen already throws confetti.
     ctx.mascot.say(S.solved, 'cheer', 3000);
-    cellEls.forEach((el, k) => setTimeout(() => alive && replay(el, 'flash'), k * 15));
+    flash(cellEls.keys(), 15);
     ctx.finish({ stars: starsFromMistakes(mistakes, cfg.three, cfg.two) });
   }
 
@@ -269,10 +285,7 @@ function mount(stage: HTMLElement, ctx: GameContext): () => void {
     'wave',
     6000,
   );
-  return () => {
-    alive = false;
-    stopResize();
-  };
+  return () => stopResize();
 }
 
 const game: GameModule = {

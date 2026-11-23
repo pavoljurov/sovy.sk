@@ -2,7 +2,7 @@ import { h } from './dom';
 import { games } from './registry';
 import { Mascot, mascotSvg } from './mascot';
 import { sfx } from './sfx';
-import { confetti } from './effects';
+import { CONFETTI, confetti } from './effects';
 import { getBest, saveBest } from './storage';
 import { APP, T } from './config';
 import { getLang, LANGS, setLang, tx } from './i18n';
@@ -286,7 +286,7 @@ function gameScreen(game: GameModule, level: LevelInfo): HTMLElement {
     lang: getLang(),
     mascot: { say: (t, m, d) => mascot.say(t, m, d), mood: (m) => mascot.setMood(m) },
     sfx,
-    celebrate: (size = 'small') => confetti(size === 'big' ? 140 : 45),
+    celebrate: (size = 'small') => confetti(CONFETTI[size]),
     setProgress(done, total) {
       lastTotal = total;
       if (total > 12) {
@@ -326,7 +326,7 @@ function showResult(game: GameModule, result: GameResult): void {
   if (!document.querySelector(`.game-${game.id}`)) return; // the kid already left the game
   const t = T();
   sfx.win();
-  if (result.stars >= 2) confetti(140);
+  if (result.stars >= 2) confetti(CONFETTI.big);
   mascot.say(result.stars === 3 ? t.resultCheer3 : t.resultCheer, 'cheer', 6000);
 
   const overlay = h(
