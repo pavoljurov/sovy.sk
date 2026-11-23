@@ -1,0 +1,57 @@
+.game-math { background: linear-gradient(#c9ecff, #fff 70%); }
+.m-wrap { height: 100%; display: flex; flex-direction: column; padding: 1em; }
+.m-top { display: flex; flex-direction: column; align-items: center; gap: 0.5em; }
+.m-eq { display: flex; align-items: center; gap: 0.35em; font-size: clamp(2.6em, 7vmin, 5em); font-weight: 800; }
+.m-num {
+  min-width: 1.4em; text-align: center; background: #fff; border: 0.06em solid #2b2440; border-radius: 0.3em;
+  padding: 0 0.2em; box-shadow: 0 0.08em 0 #2b2440; font-variant-numeric: tabular-nums;
+}
+.m-op { color: #7b5cff; }
+.m-hole { background: #fff6c2; border-style: dashed; color: #ff8a3d; animation: hole 1.2s ease-in-out infinite; }
+.m-hole.solved { background: var(--green); color: #fff; border-style: solid; animation: pop-in 0.35s; }
+@keyframes hole { 50% { transform: scale(1.06); } }
+
+.m-visual { display: flex; align-items: center; gap: 0.6em; font-size: 1.6em; flex-wrap: wrap; justify-content: center; }
+.m-dots { display: grid; grid-template-columns: repeat(5, 1em); gap: 0.25em; }
+.m-dots i { width: 1em; height: 1em; border-radius: 50%; border: 0.1em solid #2b2440; position: relative; }
+.m-dots .d1 { background: var(--orange); }
+.m-dots .d2 { background: var(--teal); }
+.m-dots .gone { opacity: 0.35; }
+.m-dots .gone::after {
+  content: '✕'; position: absolute; inset: 0; display: grid; place-items: center;
+  font-size: 0.9em; line-height: 1; color: #2b2440; opacity: 1;
+}
+.m-streak { min-height: 1.4em; font-size: 1.2em; color: #ff8a3d; }
+
+.m-sky { flex: 1; display: flex; align-items: center; justify-content: space-evenly; gap: 0.5em; min-height: 0; }
+.m-balloon {
+  --bc: #ff5d8f;
+  position: relative; width: clamp(4.5em, 16vmin, 9em); aspect-ratio: 0.82; border: 0.16em solid #2b2440;
+  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.7) 0 9%, transparent 10%), var(--bc);
+  border-radius: 50% 50% 47% 47% / 55% 55% 45% 45%; cursor: pointer; padding: 0;
+  animation: sway var(--sway) ease-in-out var(--delay) infinite alternate;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.m-balloon::before {
+  content: ''; position: absolute; left: 50%; bottom: -0.45em; transform: translateX(-50%);
+  border: 0.35em solid transparent; border-bottom: 0.5em solid #2b2440; border-top: 0;
+}
+.m-balloon::after {
+  content: ''; position: absolute; left: 50%; top: 100%; width: 0.12em; height: 2.2em; margin-top: 0.4em;
+  background: #2b2440; border-radius: 1em; transform-origin: top; transform: rotate(4deg);
+}
+.m-balloon span {
+  font-size: clamp(1.8em, 6vmin, 3.4em); font-weight: 800; color: #fff;
+  -webkit-text-stroke: 0.08em #2b2440; paint-order: stroke fill;
+}
+.m-balloon.wrong { animation: deflate 0.5s forwards; }
+.m-balloon.popped { animation: popped 0.4s forwards; }
+.m-balloon:disabled { cursor: default; }
+@keyframes sway { from { transform: translateY(-4%) rotate(-3deg); } to { transform: translateY(4%) rotate(3deg); } }
+@keyframes deflate { 40% { transform: translateX(-6%) rotate(-8deg); } to { transform: scale(0.75) translateY(20%); opacity: 0.3; } }
+@keyframes popped { 30% { transform: scale(1.25); } to { transform: scale(1.6); opacity: 0; } }
+
+@media (max-aspect-ratio: 1/1) {
+  .m-sky { display: grid; grid-template-columns: 1fr 1fr; justify-items: center; align-content: space-evenly; }
+  .m-balloon { width: clamp(4em, 22vw, 8em); }
+}

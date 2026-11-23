@@ -1,0 +1,36 @@
+.game-sudoku { display: flex; align-items: center; justify-content: center; }
+.sdk { display: flex; align-items: center; justify-content: center; gap: 1.5em; width: 100%; height: 100%; padding: 12px; }
+.sdk.vertical { flex-direction: column; gap: 0.8em; }
+
+.sdk-board {
+  --cell: 60px;
+  display: grid; grid-template-columns: repeat(var(--n), 1fr); grid-template-rows: repeat(var(--n), 1fr);
+  border: 0.22em solid #2b2440; border-radius: 0.8em; overflow: hidden; background: #2b2440; gap: 2px;
+  box-shadow: 0.2em 0.25em 0 #2b2440; flex: none;
+}
+.sdk-cell {
+  border: 0; padding: 0; background: #fff; cursor: pointer; display: grid; place-items: center;
+  font-size: calc(var(--cell) * 0.6); font-weight: 800; color: #3da5ff; line-height: 1;
+  transition: background 0.15s;
+}
+.sdk-cell.alt { background: #f6f2ff; }
+.sdk-cell.br { border-right: 3px solid #2b2440; }
+.sdk-cell.bb { border-bottom: 3px solid #2b2440; }
+.sdk-cell.given { color: #2b2440; cursor: default; }
+.sdk-cell svg { width: 72%; height: 72%; }
+.sdk-cell.peer { background: #fff3c4; }
+.sdk-cell.same { background: #ffe27a; }
+.sdk-cell.sel { background: #ffd23f; box-shadow: inset 0 0 0 0.18em #ff8a3d; }
+.sdk-cell.flash { animation: sdk-flash 0.8s; }
+.sdk-cell.clash { animation: sdk-clash 1.2s; }
+@keyframes sdk-flash { 30% { background: #b8f5c0; transform: scale(1.08); } }
+@keyframes sdk-clash { 0%, 60% { background: #ffb3bb; } }
+
+.sdk-side { display: flex; flex-direction: column; align-items: center; gap: 1em; }
+.sdk-pal { display: grid; grid-template-columns: repeat(var(--pc), 1fr); gap: 0.6em; }
+.sdk-key { --b: #fff; color: #2b2440; width: 2.6em; height: 2.6em; font-size: 1.6em; padding: 0; }
+.sdk-key svg { width: 1.4em; height: 1.4em; }
+.n9 ~ .sdk-side .sdk-key { font-size: 1.35em; }
+.vertical .sdk-side { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+.vertical .sdk-key { width: 2.2em; height: 2.2em; font-size: 1.3em; }
+.vertical .n9 ~ .sdk-side .sdk-key { width: 1.8em; height: 2em; font-size: 1.1em; }

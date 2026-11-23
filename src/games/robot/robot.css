@@ -1,0 +1,65 @@
+.game-robot { display: flex; align-items: center; justify-content: center; background: #f3fbff; }
+.rb { display: flex; align-items: center; justify-content: center; gap: 1.5em; width: 100%; height: 100%; padding: 12px; }
+.rb.vertical { flex-direction: column; gap: 0.7em; }
+
+.rb-board {
+  position: relative; flex: none; display: grid;
+  grid-template-columns: repeat(var(--n), 1fr); grid-template-rows: repeat(var(--n), 1fr);
+  background: #2b2440; gap: 3px; padding: 3px; border-radius: 0.9em; box-shadow: 0.2em 0.25em 0 #2b2440;
+}
+.rb-tile { background: #c8f0d0; border-radius: 0.35em; }
+.rb-tile:nth-child(odd) { background: #b5e8c0; }
+.rb-layer { position: absolute; inset: 3px; pointer-events: none; }
+.rb-item, .rb-robot { position: absolute; width: calc(100% / var(--n)); height: calc(100% / var(--n)); display: grid; place-items: center; }
+.rb-item svg { width: 80%; height: 80%; }
+.rb-item.goal svg { animation: flag 1.2s ease-in-out infinite alternate; transform-origin: 35% 85%; }
+.rb-item.battery svg { animation: bob-b 1.4s ease-in-out infinite alternate; }
+.rb-item.battery.got { transition: transform 0.4s, opacity 0.4s; transform: scale(1.6) translateY(-30%); opacity: 0; }
+@keyframes flag { to { transform: rotate(-5deg); } }
+@keyframes bob-b { to { transform: translateY(-8%); } }
+
+.rb-robot { left: 0; top: 0; transition: left 0.35s ease-in-out, top 0.35s ease-in-out; z-index: 2; }
+.rb-robot-inner { position: relative; width: 92%; height: 92%; display: grid; place-items: center; }
+.rb-robot-face { width: 78%; height: 88%; transition: transform 0.25s; }
+.rb-robot-face .owl { width: 100%; height: 100%; }
+.rb-robot-face.flip { transform: scaleX(-1); }
+.rb-robot-arrow {
+  position: absolute; inset: -8%; display: grid; place-items: start center; color: #ffd23f;
+  transition: transform 0.3s ease-in-out; pointer-events: none;
+}
+.rb-robot-arrow svg { width: 34%; height: 34%; margin-top: -14%; }
+.rb-robot.bump .rb-robot-inner { animation: bump 0.5s; }
+.rb-robot.home .rb-robot-inner { animation: hop 0.5s cubic-bezier(0.3, 1.5, 0.6, 1) 3; }
+@keyframes bump {
+  35% { transform: translate(calc(var(--bx) * 28%), calc(var(--by) * 28%)); }
+  55% { transform: translate(calc(var(--bx) * -6%), calc(var(--by) * -6%)) rotate(-8deg); }
+  75% { transform: rotate(6deg); }
+}
+
+.rb-panel { display: flex; flex-direction: column; gap: 0.9em; align-items: center; min-width: 0; flex: 1; max-width: 22em; }
+.vertical .rb-panel { max-width: none; width: 100%; gap: 0.6em; }
+.rb-program-box {
+  width: 100%; background: #fff; border: 0.14em solid #2b2440; border-radius: 1em; padding: 0.4em; position: relative;
+}
+.rb-program { display: flex; flex-wrap: wrap; gap: 0.3em; min-height: 2.4em; max-height: 8.4em; overflow-y: auto; align-content: flex-start; }
+.vertical .rb-program { flex-wrap: nowrap; overflow-x: auto; max-height: none; }
+.rb-empty { opacity: 0.45; align-self: center; padding: 0 0.4em; }
+.rb-counter { position: absolute; right: 0.6em; bottom: -0.75em; background: #fff; border: 0.1em solid #2b2440; border-radius: 1em; padding: 0 0.5em; font-size: 0.8em; }
+.rb-chip {
+  flex: none; width: 2.3em; height: 2.3em; padding: 0.25em; border-radius: 0.6em; border: 0.12em solid #2b2440;
+  background: #7b5cff; color: #fff; cursor: pointer; transition: transform 0.15s;
+}
+.rb-chip.turn { background: #ff8a3d; }
+.rb-chip svg { width: 100%; height: 100%; }
+.rb-chip.done { opacity: 0.45; }
+.rb-chip.active { background: #ffd23f; color: #2b2440; transform: scale(1.18); }
+
+.rb-pad { display: grid; gap: 0.5em; }
+.rb-pad.abs { grid-template-columns: repeat(3, 3.6em); grid-template-rows: repeat(2, 3.6em); }
+.rb-pad.rel { grid-template-columns: repeat(3, 4.2em); grid-template-rows: 4.2em; }
+.rb-cmd { width: 100%; height: 100%; padding: 0.35em; --b: #7b5cff; color: #fff; }
+.rb-cmd svg { width: 100%; height: 100%; }
+.rb-cmd.turn { --b: #ff8a3d; }
+.vertical .rb-pad.abs { grid-template-columns: repeat(3, 3em); grid-template-rows: repeat(2, 3em); }
+.rb-actions { display: flex; gap: 0.5em; flex-wrap: wrap; justify-content: center; }
+.rb-run { min-width: 5em; }
