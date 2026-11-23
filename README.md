@@ -54,6 +54,7 @@ src/
     sudoku/  index.ts + sudoku.css   ← Sudoku 4×4 shapes / 4×4 numbers / 9×9
     robot/   index.ts + robot.css    ← Robot Path (program arrows / forward+turn on a grid)
     chessmaze/ index.ts + logic.ts + chessmaze.css ← Chess Maze (move a rook/bishop/knight past guarded squares)
+    flags/   index.ts + countries.ts + flags.css + svg/  ← World Flags (flag quiz; SVGs from flag-icons, MIT)
 ```
 
 ### How the app flows
@@ -85,7 +86,7 @@ interface GameModule {
   tagline: Text;
   color: string;              // home card colour (hex)
   icon: string;               // inline SVG markup, viewBox ~64×64, ink outline #2B2440
-  order?: number;             // home screen position (clock 1, math 2, sudoku 3, robot 4, chessmaze 5)
+  order?: number;             // home screen position (clock 1, math 2, sudoku 3, robot 4, chessmaze 5, flags 6)
   hidden?: boolean;           // true = temporarily hidden from home screen
   levels: LevelInfo[];        // 2 or 3 items: { id: 'easy'|'medium'|'hard', description: Text, label?: Text }
   mount(stage: HTMLElement, ctx: GameContext): () => void;   // returns cleanup
@@ -291,6 +292,7 @@ export default game;
 | **Sudoku** | `games/sudoku` | 4×4 shapes / 4×4 numbers / 9×9 | Generator shuffles a base pattern, then removes cells while a solver confirms exactly one solution. Supports rectangular boxes (e.g. 6×6 = 2×3) via `br`/`bc`. 3 "help" hints. |
 | **Robot Path** | `games/robot` | 5×5 arrows / 6×6 + batteries / 6×6 forward+turn | The kid builds a command list, the owl executes it step by step. BFS validates reachability; the program-length limit is per level. 5 puzzles per session. |
 | **Chess Maze** | `games/chessmaze` | rook 6×6 / bishop 7×7 / knight 7×7 | Move your piece to the flag without stopping on a square an enemy piece (rook/bishop/knight) attacks. Enemies are static and cannot be captured; sliding pieces cannot jump over pieces. Dots show legal moves; a tap on a guarded square counts as a mistake and the attacker wiggles. "Danger" (3 per game) reveals guarded squares for the current puzzle. Pure logic in `logic.ts`; the generator uses BFS and requires the danger to make the route longer than on a free board. 5 puzzles per session. |
+| **World Flags** | `games/flags` | Europe, 3 choices / well-known world flags / all 195 countries | Two question types: "which country has this flag?" (name buttons) and "find the flag" (2×2 flag buttons). Country names (EN/SK), continents, the well-known set and groups of look-alike flags live in `countries.ts`. Easy avoids look-alikes as distractors; hard prefers them, then the same continent. A wrong answer reveals what it really is (its flag or name); a 2nd mistake gives a continent hint. Flag SVGs are copied from [flag-icons](https://github.com/lipis/flag-icons) (MIT, licence in `svg/`) and loaded as asset URLs. |
 
 ---
 

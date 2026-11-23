@@ -1,0 +1,75 @@
+.game-flags { display: flex; align-items: stretch; }
+.flg { flex: 1; min-width: 0; min-height: 0; display: grid; gap: 1.2em; padding: 1.2em 1.5em; }
+
+/* shared flag look: sticker frame, 4:3 */
+.flg-img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; pointer-events: none; user-select: none; }
+.flg-q { font-size: 1.7em; font-weight: 800; text-align: center; line-height: 1.15; }
+
+/* ---------- mode "name": big flag + name buttons ---------- */
+.flg.mode-name { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: center; }
+.flg-show { display: flex; align-items: center; justify-content: center; min-height: 0; height: 100%; }
+.flg-frame {
+  width: min(100%, calc((100cqh - 0.5em) * 4 / 3), 34em);
+  border: 0.18em solid #2b2440; border-radius: 0.7em; overflow: hidden; background: #fff;
+  box-shadow: 0.2em 0.3em 0 #2b2440; animation: pop-in 0.35s cubic-bezier(0.3, 1.6, 0.6, 1);
+}
+.flg-show { container-type: size; align-self: stretch; }
+.flg-panel { display: flex; flex-direction: column; align-items: center; gap: 0.9em; min-width: 0; }
+.flg-options { display: grid; grid-template-columns: 1fr; gap: 0.75em; width: 100%; max-width: 20em; }
+.flg-opt {
+  --b: #fff; color: #2b2440; font-size: 1.35em; min-height: 2.4em; padding: 0.3em 0.7em;
+  line-height: 1.1; text-align: center; overflow-wrap: anywhere;
+}
+.flg-opt.right { --b: var(--green); color: #fff; }
+.flg-opt.right:disabled { filter: none; }
+.flg-opt.wrong:disabled { filter: none; opacity: 0.55; text-decoration: line-through; }
+.flg-opt:disabled:not(.right):not(.wrong) { filter: none; opacity: 0.35; }
+.flg-mini {
+  width: 1.9em; height: auto; aspect-ratio: 4 / 3; flex: none; object-fit: cover;
+  border: 0.08em solid #2b2440; border-radius: 0.2em;
+}
+
+/* ---------- mode "flag": country name + flag buttons ---------- */
+.flg.mode-flag { grid-template-rows: auto minmax(0, 1fr); justify-items: center; }
+.flg-head { display: flex; flex-direction: column; align-items: center; gap: 0.3em; }
+.flg-name {
+  font-size: 2.2em; font-weight: 800; line-height: 1.1; text-align: center;
+  background: #2b2440; color: #ffd23f; padding: 0.15em 0.6em; border-radius: 0.35em;
+}
+.flg-grid {
+  container-type: size; width: 100%; height: 100%; min-height: 0;
+  display: grid; grid-template-columns: repeat(2, auto); place-content: center; gap: 1em;
+}
+.flg-grid.n3 { grid-template-columns: repeat(3, auto); }
+.flg-pick {
+  position: relative; padding: 0; cursor: pointer; background: #fff;
+  /* fit 4:3 flags into the grid container: 2×2, or 3 in a row */
+  width: min(calc(50cqw - 0.5em), calc((50cqh - 0.5em) * 4 / 3));
+  border: 0.18em solid #2b2440; border-radius: 0.6em; overflow: hidden;
+  box-shadow: 0.15em 0.25em 0 #2b2440; transition: transform 0.08s, box-shadow 0.08s;
+}
+.flg-grid.n3 .flg-pick { width: min(calc(33.3cqw - 0.7em), calc((100cqh - 0.5em) * 4 / 3)); }
+.flg-pick:active:not(:disabled) { transform: translateY(0.25em); box-shadow: 0 0 0 #2b2440; }
+.flg-pick:disabled { cursor: default; }
+.flg-pick.right { outline: 0.3em solid var(--green); outline-offset: 0.15em; }
+.flg-pick.wrong { border-color: var(--red); box-shadow: 0.15em 0.25em 0 var(--red); }
+.flg-pick.wrong .flg-img { opacity: 0.8; }
+.flg-pick-label {
+  display: none; position: absolute; left: 0; right: 0; bottom: 0; padding: 0.2em 0.4em;
+  background: rgba(43, 36, 64, 0.85); color: #fff; font-weight: 800; font-size: 1.05em; line-height: 1.15;
+}
+.flg-pick.wrong .flg-pick-label { background: var(--red); }
+.flg-pick.wrong .flg-pick-label, .flg-pick.right .flg-pick-label { display: block; }
+.flg-pick.right .flg-pick-label { background: var(--green); }
+
+@media (max-aspect-ratio: 1/1) {
+  .flg { padding: 0.8em; gap: 0.8em; }
+  .flg.mode-name { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
+  .flg-q { font-size: 1.3em; }
+  .flg-opt { font-size: 1.15em; min-height: 2.3em; }
+  .flg-options { gap: 0.55em; }
+  .flg-name { font-size: 1.6em; }
+  .flg-grid { gap: 0.7em; }
+  .flg-grid.n3 { grid-template-columns: auto; }
+  .flg-grid.n3 .flg-pick { width: min(100cqw, calc((33.3cqh - 0.5em) * 4 / 3)); }
+}
