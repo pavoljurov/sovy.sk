@@ -7,6 +7,9 @@ export const MASCOT_NAME = 'Huhu';
 
 const en = {
   tagline: 'Games for clever minds',
+  /** Home-page headline; `highlight` is drawn in the brand colour. */
+  slogan: { before: 'Be as wise as ', highlight: 'owls', after: '!' },
+  intro: 'A box of educational mini-games for every curious kid. Puzzles, numbers, clocks and more — play, explore and grow your brain!',
   greetings: [
     `Hoo-hoo! I'm ${MASCOT_NAME} the owl. Pick a game and let's play!`,
     'Hello, friend! Which game today?',
@@ -52,6 +55,8 @@ const en = {
 
 const sk: typeof en = {
   tagline: 'Hry pre bystré hlavičky',
+  slogan: { before: 'Buďte múdri ako ', highlight: 'sovy', after: '!' },
+  intro: 'Súbor edukatívnych minihier pre všetky zvedavé deti. Hádanky, počty, hodiny a ešte viac — hraj sa, objavuj a trénuj hlavičku!',
   greetings: [
     `Hú-hú! Ja som sovička ${MASCOT_NAME}. Vyber si hru a poďme sa hrať!`,
     'Ahoj! Akú hru si dnes zahráme?',

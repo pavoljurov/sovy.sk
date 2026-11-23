@@ -33,7 +33,8 @@ function render(): void {
   mascot.hush();
   document.querySelectorAll('.overlay').forEach((o) => o.remove());
   root.replaceChildren();
-  document.title = `${APP.name}${APP.tld}`;
+  const { slogan } = T();
+  document.title = `${APP.name}${APP.tld} — ${slogan.before}${slogan.highlight}${slogan.after}`;
 
   const [section, gameId, levelId] = location.hash.replace(/^#\/?/, '').split('/');
   if (section === 'play' && gameId) {
@@ -169,10 +170,18 @@ function homeScreen(): HTMLElement {
     );
   });
 
+  const { slogan, intro } = T();
+  const hero = h(
+    'section',
+    { class: 'home-hero' },
+    h('h1', { class: 'home-slogan' }, slogan.before, h('em', null, slogan.highlight), slogan.after),
+    h('p', { class: 'home-intro' }, intro),
+  );
+
   return h(
     'div',
     { class: 'screen home' },
-    h('header', { class: 'topbar' }, logo(), tools()),
+    h('header', { class: 'topbar' }, logo(), hero, tools()),
     h('div', { class: 'home-body' }, slot, h('div', { class: 'game-grid' }, cards)),
   );
 }

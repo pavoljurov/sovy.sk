@@ -302,7 +302,7 @@ export default game;
   **To add a language:** extend `Lang` and `LANGS` (name + flag SVG), then add a dictionary next to
   `en`/`sk` in `config.ts` and in every game.
 - **Storage keys** (prefix `sovy:`): `best:<gameId>:<level>` (0–3), `lang`, `muted`.
-- **Branding:** `APP` and `MASCOT_NAME` in `config.ts`; the owl artwork is in `mascot.ts`
+- **Branding:** `APP`, `MASCOT_NAME` and the home-page `slogan` / `intro` texts in `config.ts`; the owl artwork is in `mascot.ts`
   (`mascotSvg`) and `public/favicon.svg`; the page title is in `index.html`.
 - **Mascot moods** are CSS-driven: `data-mood` on `.mascot` toggles SVG parts (`.owl-eyes-happy`,
   `.m-open` beak, `.m-sad` brows, tassel swing for `think`, wing waves).

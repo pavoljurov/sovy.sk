@@ -151,6 +151,18 @@ svg { display: block; }
 }
 .game-card-stars .star { width: 1.1em; height: 1.1em; }
 
+.home-hero {
+  flex: 1; min-width: 0; text-align: center; padding: 0 1em;
+  animation: card-in 0.5s both cubic-bezier(0.3, 1.5, 0.6, 1);
+}
+.home-slogan { margin: 0; font-size: 2.4em; font-weight: 800; line-height: 1; color: var(--ink); }
+.home-slogan em {
+  font-style: normal; color: var(--orange); display: inline-block; transform: rotate(-4deg);
+  -webkit-text-stroke: 0.08em var(--ink); paint-order: stroke fill; text-shadow: 0.05em 0.07em 0 var(--ink);
+  margin: 0 0.05em;
+}
+.home-intro { margin: 0.35em auto 0; font-size: 1.05em; max-width: 38em; opacity: 0.8; line-height: 1.3; }
+
 @keyframes card-in { from { opacity: 0; transform: translateY(1.5em) scale(0.9); } }
 
 /* ---------- level select ---------- */
@@ -302,6 +314,9 @@ body:has(.result-overlay) .mascot-slot { z-index: 55; }
   .game-screen .title-icon { display: none; }
   .logo-name { font-size: 2.2em; }
   .logo-mark { width: 2.6em; height: 2.6em; }
+  .home-hero { order: 5; flex-basis: 100%; padding: 0.4em 0 0; }
+  .home-slogan { font-size: 2.1em; }
+  .home-intro { font-size: 1em; }
 }
 @media (max-width: 520px) {
   :root { font-size: 15px; }
