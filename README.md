@@ -313,3 +313,15 @@ export default game;
 - Seeded "puzzle of the day" so a whole group plays the same puzzles.
 - Hand-crafted level packs (e.g. fixed robot maps) next to the random generators.
 - More games: shapes & symmetry, money counting, multiplication, spelling (SK diacritics), memory pairs.
+
+---
+
+## License
+
+The **code** is licensed under [0BSD](LICENSE): you can use, copy, modify and distribute it for
+any purpose, with or without fee, and no attribution is required.
+
+The **sovy.sk name** and the **Huhu owl mascot** (name and artwork: `mascotSvg()` in
+`src/platform/mascot.ts` and `public/favicon.svg`) are **not** covered by the license. If you
+publish your own fork, please give it your own name and mascot: see **Branding** under
+[Platform details](#platform-details) for where they live.
