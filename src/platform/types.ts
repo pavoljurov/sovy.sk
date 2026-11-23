@@ -69,6 +69,11 @@ export interface GameModule {
   order?: number;
   /** Set true to temporarily hide a game without deleting it. */
   hidden?: boolean;
+  /**
+   * 2–4 short "how to play" steps, shown as a story strip on the level-select screen.
+   * One sentence each, written for an 8-year-old.
+   */
+  howTo?: Text[];
   /** 2 or 3 difficulty levels. */
   levels: LevelInfo[];
   /**

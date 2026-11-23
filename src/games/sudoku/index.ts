@@ -282,6 +282,11 @@ const game: GameModule = {
   tagline: { en: 'Fill the grid – no repeats!', sk: 'Vyplň mriežku – nič sa neopakuje!' },
   color: '#4CC95B',
   icon: ICON,
+  howTo: [
+    { en: 'Each row, column and box must have every shape or number exactly once.', sk: 'V každom riadku, stĺpci aj štvorci musí byť každý tvar alebo číslo práve raz.' },
+    { en: 'Tap an empty square, then pick what belongs there.', sk: 'Ťukni na prázdne políčko a vyber, čo doň patrí.' },
+    { en: 'Stuck? The Help button fills in one square (it counts as a mistake).', sk: 'Nevieš ďalej? Tlačidlo Pomoc vyplní jedno políčko (ale počíta sa ako chyba).' },
+  ],
   levels: [
     { id: 'easy', description: { en: '4×4 with colourful shapes', sk: '4×4 s farebnými tvarmi' } },
     { id: 'medium', description: { en: '4×4 with numbers 1–4', sk: '4×4 s číslami 1–4' } },

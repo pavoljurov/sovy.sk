@@ -205,6 +205,11 @@ const game: GameModule = {
   tagline: { en: 'Which country is it?', sk: 'Ktorá je to krajina?' },
   color: '#3DA5FF',
   icon: ICON,
+  howTo: [
+    { en: 'Look at the flag and tap the country it belongs to.', sk: 'Pozri sa na vlajku a ťukni na krajinu, ktorej patrí.' },
+    { en: "Sometimes it's the other way round: find the flag for a country name.", sk: 'Niekedy naopak: k názvu krajiny nájdi správnu vlajku.' },
+    { en: 'Wrong? Huhu shows whose flag it really is and gives a hint.', sk: 'Chyba? Sovička ukáže, čia je to naozaj vlajka, a poradí.' },
+  ],
   levels: [
     { id: 'easy', description: { en: 'Europe, 3 choices', sk: 'Európa, 3 možnosti' } },
     { id: 'medium', description: { en: 'Well-known flags of the world', sk: 'Známe vlajky sveta' } },

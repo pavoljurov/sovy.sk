@@ -321,6 +321,12 @@ const game: GameModule = {
   tagline: { en: 'Sneak past the guarded squares', sk: 'Prekĺzni pomedzi strážené políčka' },
   color: '#FF8A3D',
   icon: ICON,
+  howTo: [
+    { en: 'Move your chess piece to the flag.', sk: 'Dostaň svoju šachovú figúrku k vlajke.' },
+    { en: 'Tap a square with a dot to move there. Each piece moves in its own way.', sk: 'Ťukni na políčko s bodkou a figúrka sa tam presunie. Každá figúrka chodí inak.' },
+    { en: "Never stop on a square an enemy piece attacks. Enemies don't move.", sk: 'Nikdy nezastav na políčku, ktoré stráži nepriateľ. Nepriatelia sa nehýbu.' },
+    { en: 'Not sure? The Danger button shows the guarded squares in red.', sk: 'Nevieš? Tlačidlo Nebezpečie ukáže strážené políčka načerveno.' },
+  ],
   levels: [
     { id: 'easy', description: { en: 'Rook: straight lines', sk: 'Veža: chodí rovno' } },
     { id: 'medium', description: { en: 'Bishop: diagonal moves', sk: 'Strelec: chodí šikmo' } },

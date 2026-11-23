@@ -223,7 +223,31 @@ function levelScreen(game: GameModule): HTMLElement {
       h('div', { class: 'title-pill' }, h('span', { class: 'title-icon', html: game.icon }), tx(game.title)),
       tools(),
     ),
-    h('div', { class: 'level-body' }, slot, h('div', { class: 'level-grid' }, cards)),
+    h('div', { class: 'level-body' }, slot, h('div', { class: 'level-main' }, howTo(game), game.howTo?.length ? h('h2', { class: 'level-heading' }, T().ui.chooseLevel) : null, h('div', { class: 'level-grid' }, cards))),
+  );
+}
+
+const BULB = `<svg viewBox="0 0 24 24"><path d="M12 2.5a6.5 6.5 0 0 0-3.8 11.8c.6.5.9 1.1.9 1.8v.9h5.8v-.9c0-.7.3-1.3.9-1.8A6.5 6.5 0 0 0 12 2.5z" fill="#fff" stroke="#2B2440" stroke-width="1.8" stroke-linejoin="round"/><path d="M9.5 19.5h5M10.5 22h3" stroke="#2B2440" stroke-width="1.8" stroke-linecap="round"/><path d="M12 6.5a2.8 2.8 0 0 0-2.8 2.8" stroke="#FF8A3D" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>`;
+
+/** "How to play" story strip: numbered step cards, scrolls sideways on narrow screens. */
+function howTo(game: GameModule): HTMLElement | null {
+  if (!game.howTo?.length) return null;
+  return h(
+    'section',
+    { class: 'howto' },
+    h('h2', { class: 'howto-title' }, h('span', { html: BULB }), T().ui.howTo),
+    h(
+      'ol',
+      { class: 'howto-steps' },
+      game.howTo.map((step, i) =>
+        h(
+          'li',
+          { class: 'howto-step', style: { animationDelay: `${i * 90}ms` } },
+          h('span', { class: 'howto-num' }, i + 1),
+          h('span', { class: 'howto-text' }, tx(step)),
+        ),
+      ),
+    ),
   );
 }
 

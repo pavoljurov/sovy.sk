@@ -372,6 +372,12 @@ const game: GameModule = {
   tagline: { en: `Program ${MASCOT_NAME} to reach the flag`, sk: `Naprogramuj ${MASCOT_NAME} cestu k vlajke` },
   color: '#7B5CFF',
   icon: ICON,
+  howTo: [
+    { en: 'Help Huhu get to the flag.', sk: 'Pomôž sovičke Huhu dostať sa k vlajke.' },
+    { en: 'Tap the arrows to build a program – a list of steps.', sk: 'Ťukaj na šípky a poskladaj program – zoznam krokov.' },
+    { en: 'Press Start and watch Huhu follow your program. Watch out for rocks!', sk: 'Stlač Štart a sleduj, ako sovička plní tvoj program. Pozor na kamene!' },
+    { en: "Didn't work? Fix the program and try again.", sk: 'Nevyšlo to? Oprav program a skús to znova.' },
+  ],
   levels: [
     { id: 'easy', description: { en: 'Small 5×5 board, arrow steps', sk: 'Malá plocha 5×5, kroky šípkami' } },
     { id: 'medium', description: { en: 'Collect batteries on the way', sk: 'Po ceste pozbieraj batérie' } },

@@ -396,6 +396,11 @@ const game: GameModule = {
   tagline: { en: 'Learn to read the clock', sk: 'Nauč sa čítať hodiny' },
   color: '#3DA5FF',
   icon: ICON,
+  howTo: [
+    { en: 'Look at the clock: the short hand shows the hour, the long hand the minutes.', sk: 'Pozri sa na hodiny: krátka ručička ukazuje hodiny, dlhá minúty.' },
+    { en: 'The picture tells you the part of the day – morning, afternoon, evening or night.', sk: 'Obrázok prezradí časť dňa – ráno, popoludnie, večer alebo noc.' },
+    { en: 'Tap the right time. Sometimes you set the clock instead – turn the hands with the buttons.', sk: 'Ťukni na správny čas. Niekedy hodiny nastavuješ – ručičky otáčaš tlačidlami.' },
+  ],
   levels: [
     { id: 'easy', description: { en: 'Whole hours – 3:00 and 15:00', sk: 'Celé hodiny – 3:00 aj 15:00' } },
     { id: 'medium', description: { en: 'Quarters and halves, all day long', sk: 'Štvrť, pol a tri štvrte – celý deň' } },

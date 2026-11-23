@@ -64,7 +64,7 @@ Hash routing (`app.ts`):
 | URL                        | Screen                                                  |
 |----------------------------|---------------------------------------------------------|
 | `#/`                       | Home: logo, owl greeting, one card per game             |
-| `#/play/<gameId>`          | Level select (2 or 3 level cards with best stars)       |
+| `#/play/<gameId>`          | Level select: "How to play" steps + 2 or 3 level cards with best stars |
 | `#/play/<gameId>/<level>`  | Game screen: top bar + `stage` + owl column             |
 
 On every route change, `render()` calls the previous game's cleanup function, clears the DOM and
@@ -88,6 +88,7 @@ interface GameModule {
   icon: string;               // inline SVG markup, viewBox ~64×64, ink outline #2B2440
   order?: number;             // home screen position (clock 1, math 2, sudoku 3, robot 4, chessmaze 5, flags 6)
   hidden?: boolean;           // true = temporarily hidden from home screen
+  howTo?: Text[];             // 2–4 short "how to play" steps, shown on the level-select screen
   levels: LevelInfo[];        // 2 or 3 items: { id: 'easy'|'medium'|'hard', description: Text, label?: Text }
   mount(stage: HTMLElement, ctx: GameContext): () => void;   // returns cleanup
 }
@@ -113,7 +114,8 @@ gives a `description` per level (and an optional custom `label`).
 1. **Create the folder** `src/games/<id>/` with `index.ts` (and usually `<id>.css`).
 2. **Export a `GameModule` as default.** It is picked up automatically by `registry.ts`; there
    is no list to edit.
-3. **Build it** following the template and conventions below.
+3. **Build it** following the template and conventions below. Give it `howTo` steps, so a
+   teacher or parent opening it for the first time knows what to do.
 4. **Check it:** run `npm run build` (must pass with no TS errors), then play every level in
    both languages, at TV size (1920×1080) and at phone portrait size (≈390×844).
 
@@ -196,6 +198,10 @@ const game: GameModule = {
   tagline: { en: 'Find the right shape', sk: 'Nájdi správny tvar' },
   color: '#1FC2AE',
   icon: ICON,
+  howTo: [
+    { en: 'Look at the shapes.', sk: 'Pozri sa na tvary.' },
+    { en: 'Tap the circle.', sk: 'Ťukni na kruh.' },
+  ],
   levels: [
     { id: 'easy', description: { en: '3 shapes', sk: '3 tvary' } },
     { id: 'medium', description: { en: '4 shapes', sk: '4 tvary' } },

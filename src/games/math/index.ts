@@ -172,6 +172,11 @@ const game: GameModule = {
   tagline: { en: 'Plus and minus – pop the answer!', sk: 'Plus a mínus – praskni správny balón!' },
   color: '#FF5D8F',
   icon: ICON,
+  howTo: [
+    { en: 'Solve the example.', sk: 'Vyrieš príklad.' },
+    { en: 'Pop the balloon with the right answer.', sk: 'Praskni balónik so správnou odpoveďou.' },
+    { en: 'Get several right in a row for a streak!', sk: 'Viac správnych odpovedí za sebou je séria!' },
+  ],
   levels: [
     { id: 'easy', description: { en: 'Numbers up to 10, with dots to count', sk: 'Čísla do 10 s bodkami na počítanie' } },
     { id: 'medium', description: { en: 'Numbers up to 20', sk: 'Čísla do 20' } },

@@ -39,6 +39,8 @@ const en = {
   levelNames: { easy: 'Easy', medium: 'Medium', hard: 'Hard' },
   ui: {
     home: 'Home',
+    howTo: 'How to play',
+    chooseLevel: 'Choose a level',
     back: 'Back',
     settings: 'Settings',
     fullscreen: 'Full screen',
@@ -85,6 +87,8 @@ const sk: typeof en = {
   levelNames: { easy: 'Ľahká', medium: 'Stredná', hard: 'Ťažká' },
   ui: {
     home: 'Domov',
+    howTo: 'Ako sa hrá',
+    chooseLevel: 'Vyber si úroveň',
     back: 'Späť',
     settings: 'Nastavenia',
     fullscreen: 'Celá obrazovka',
