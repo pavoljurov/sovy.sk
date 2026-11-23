@@ -33,7 +33,7 @@ const en = {
   hintMinus: (a: number, b: number) => `Start at ${a} and count back ${b}.`,
 };
 const sk: typeof en = {
-  intro: 'Prasni balónik so správnou odpoveďou!',
+  intro: 'Praskni balónik so správnou odpoveďou!',
   streak: (n) => `★ ${n} za sebou!`,
   onFire: (n) => `${n} správne za sebou! Ide ti to ako po masle!`,
   hintDots: 'Spočítaj bodky! Zvládneš to!',
@@ -169,7 +169,7 @@ const game: GameModule = {
   id: 'math',
   order: 2,
   title: { en: 'Math Balloons', sk: 'Počtové balóny' },
-  tagline: { en: 'Plus and minus – pop the answer!', sk: 'Plus a mínus – prasni správny balón!' },
+  tagline: { en: 'Plus and minus – pop the answer!', sk: 'Plus a mínus – praskni správny balón!' },
   color: '#FF5D8F',
   icon: ICON,
   levels: [

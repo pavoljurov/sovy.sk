@@ -172,7 +172,9 @@ function mount(stage: HTMLElement, ctx: GameContext): () => void {
   function updatePanel() {
     movesEl.textContent = S.moves(moves);
     peekBtn.innerHTML = `${EYE}<span>${S.peek(peeksLeft)}</span>`;
-    peekBtn.disabled = busy || peeksLeft <= 0 || board.classList.contains('peek');
+    const showing = board.classList.contains('peek');
+    peekBtn.disabled = busy || (!showing && peeksLeft <= 0);
+    peekBtn.setAttribute('aria-pressed', String(showing));
     restartBtn.disabled = busy || moves === 0;
   }
 
@@ -277,7 +279,14 @@ function mount(stage: HTMLElement, ctx: GameContext): () => void {
   }
 
   function peek() {
-    if (busy || peeksLeft <= 0) return;
+    if (busy) return;
+    if (board.classList.contains('peek')) {
+      ctx.sfx.tap();
+      board.classList.remove('peek');
+      updatePanel();
+      return;
+    }
+    if (peeksLeft <= 0) return;
     peeksLeft--;
     ctx.sfx.pop();
     board.classList.add('peek');
