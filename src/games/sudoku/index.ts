@@ -36,7 +36,6 @@ type Where = 'row' | 'column' | 'box';
 const en = {
   introShapes: 'Every row, column and box needs each shape once. Tap a square!',
   introNumbers: (n: number) => `Every row, column and box needs 1 to ${n} once. Tap a square!`,
-  tapFirst: 'First tap an empty square, then pick what goes there!',
   where: { row: 'row', column: 'column', box: 'box' } as Record<Where, string>,
   clashShape: (w: string) => `That shape is already in this ${w}!`,
   clashNumber: (v: number, w: string) => `There is already a ${v} in this ${w}!`,
@@ -48,7 +47,6 @@ const en = {
 const sk: typeof en = {
   introShapes: 'V každom riadku, stĺpci aj štvorci musí byť každý tvar raz. Ťukni na políčko!',
   introNumbers: (n) => `V každom riadku, stĺpci aj štvorci musia byť čísla 1 až ${n}, každé raz. Ťukni na políčko!`,
-  tapFirst: 'Najprv ťukni na prázdne políčko, potom vyber, čo tam patrí!',
   where: { row: 'riadku', column: 'stĺpci', box: 'štvorci' },
   clashShape: (w) => `Tento tvar už v tomto ${w} je!`,
   clashNumber: (v, w) => `V tomto ${w} už je ${v}!`,
@@ -127,6 +125,8 @@ function mount(stage: HTMLElement, ctx: GameContext): () => void {
   const totalBlanks = given.filter((g) => !g).length;
 
   let selected = -1;
+  /** Piece picked first (piece → square flow); 0 = none. Never set together with `selected`. */
+  let armed = 0;
   let mistakes = 0;
   let hintsLeft = 3;
 
@@ -162,13 +162,10 @@ function mount(stage: HTMLElement, ctx: GameContext): () => void {
     });
   }
 
-  const palette = h(
-    'div',
-    { class: 'sdk-pal', style: { '--pc': String(cfg.bc) } },
-    Array.from({ length: n }, (_, k) =>
-      h('button', { class: 'btn sdk-key', html: show(k + 1), onClick: () => place(k + 1) }),
-    ),
+  const keyEls = Array.from({ length: n }, (_, k) =>
+    h('button', { class: 'btn sdk-key', html: show(k + 1), onClick: () => pressKey(k + 1) }),
   );
+  const palette = h('div', { class: 'sdk-pal', style: { '--pc': String(cfg.bc) } }, keyEls);
   const hintBtn: HTMLButtonElement = h('button', { class: 'btn btn-warn sdk-hint', onClick: () => hint() }, S.help(hintsLeft));
   const side = h('div', { class: 'sdk-side' }, palette, hintBtn);
   const wrap = h('div', { class: 'sdk' }, board, side);
@@ -185,7 +182,8 @@ function mount(stage: HTMLElement, ctx: GameContext): () => void {
   });
 
   function refreshHighlights() {
-    const v = selected >= 0 ? cells[selected] : 0;
+    const v = selected >= 0 ? cells[selected] : armed;
+    keyEls.forEach((el, k) => el.classList.toggle('armed', k + 1 === armed));
     cellEls.forEach((el, i) => {
       const peer =
         selected >= 0 &&
@@ -199,12 +197,22 @@ function mount(stage: HTMLElement, ctx: GameContext): () => void {
   function select(i: number) {
     if (given[i] || cells[i] !== 0) {
       selected = -1;
+      armed = 0;
       refreshHighlights();
       cellEls[i].classList.add('same');
       return;
     }
-    ctx.sfx.tap();
     selected = i;
+    if (armed) return place(armed);
+    ctx.sfx.tap();
+    refreshHighlights();
+  }
+
+  function pressKey(v: number) {
+    if (selected >= 0) return place(v);
+    // No square chosen yet: remember the piece (tap it again to drop it) and wait for a square.
+    armed = armed === v ? 0 : v;
+    ctx.sfx.tap();
     refreshHighlights();
   }
 
@@ -225,12 +233,9 @@ function mount(stage: HTMLElement, ctx: GameContext): () => void {
   }
 
   function place(v: number) {
-    if (selected < 0) {
-      ctx.mascot.say(S.tapFirst, 'think', 3500);
-      return;
-    }
     const i = selected;
     if (solution[i] === v) {
+      armed = 0;
       fill(i, v);
       ctx.sfx.correct();
       const left = cells.filter((x) => x === 0).length;
@@ -240,6 +245,11 @@ function mount(stage: HTMLElement, ctx: GameContext): () => void {
       return;
     }
     mistakes++;
+    // Piece-first: keep the piece picked so another square can be tried; drop the square.
+    if (armed) {
+      selected = -1;
+      refreshHighlights();
+    }
     ctx.sfx.wrong();
     replay(cellEls[i], 'shake');
     const j = grid.conflict(cells, i, v);
@@ -262,6 +272,7 @@ function mount(stage: HTMLElement, ctx: GameContext): () => void {
     }
     hintsLeft--;
     mistakes++;
+    armed = 0;
     hintBtn.textContent = S.help(hintsLeft);
     hintBtn.disabled = hintsLeft === 0;
     fill(i, solution[i]);
@@ -297,7 +308,7 @@ const game: GameModule = {
   icon: ICON,
   howTo: [
     { en: 'Each row, column and box must have every shape or number exactly once.', sk: 'V každom riadku, stĺpci aj štvorci musí byť každý tvar alebo číslo práve raz.' },
-    { en: 'Tap an empty square, then pick what belongs there.', sk: 'Ťukni na prázdne políčko a vyber, čo doň patrí.' },
+    { en: 'Tap an empty square, then pick what belongs there – or pick first, then tap the square.', sk: 'Ťukni na prázdne políčko a vyber, čo doň patrí – alebo najprv vyber a potom ťukni na políčko.' },
     { en: 'Stuck? The Help button fills in one square (it counts as a mistake).', sk: 'Nevieš ďalej? Tlačidlo Pomoc vyplní jedno políčko (ale počíta sa ako chyba).' },
   ],
   levels: [

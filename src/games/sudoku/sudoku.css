@@ -29,6 +29,7 @@
 .sdk-side { display: flex; flex-direction: column; align-items: center; gap: 1em; }
 .sdk-pal { display: grid; grid-template-columns: repeat(var(--pc), 1fr); gap: 0.6em; }
 .sdk-key { --b: #fff; color: #2b2440; width: 2.6em; height: 2.6em; font-size: 1.6em; padding: 0; }
+.sdk-key.armed { --b: #ffd23f; outline: 0.15em solid #ff8a3d; outline-offset: 0.1em; }
 .sdk-key svg { width: 1.4em; height: 1.4em; }
 .n9 ~ .sdk-side .sdk-key { font-size: 1.35em; }
 .vertical .sdk-side { flex-direction: row; flex-wrap: wrap; justify-content: center; }
