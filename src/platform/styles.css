@@ -172,9 +172,11 @@ svg { display: block; }
 /* "How to play": a flat, tinted info panel – deliberately unlike the chunky level cards */
 .howto {
   --tint: #f3efff;
-  --tint: color-mix(in srgb, var(--game, var(--purple)) 16%, #fff);
   position: relative; min-width: 0; margin-top: 0.9em; padding: 1.5em 1em 0.6em;
   background: var(--tint); border: 0.14em dashed var(--ink); border-radius: 1.3em;
+}
+@supports (color: color-mix(in srgb, red 50%, #fff)) {
+  .howto { --tint: color-mix(in srgb, var(--game, var(--purple)) 16%, #fff); }
 }
 .howto-title {
   position: absolute; top: 0; left: 1em; margin: 0;
@@ -241,7 +243,7 @@ svg { display: block; }
 
 /* ---------- mascot ---------- */
 .mascot-slot { min-width: 0; min-height: 0; display: flex; position: relative; }
-body:has(.result-overlay) .mascot-slot { z-index: 55; }
+body.has-result .mascot-slot { z-index: 55; } /* class instead of :has() for older browsers */
 .mascot {
   width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 0.6em;
 }

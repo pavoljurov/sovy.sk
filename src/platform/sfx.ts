@@ -11,7 +11,7 @@ function audio(): AudioContext | null {
         window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       ac = new C();
     }
-    if (ac.state === 'suspended') void ac.resume();
+    if (ac.state === 'suspended') ac.resume().catch(() => {});
     return ac;
   } catch {
     return null;

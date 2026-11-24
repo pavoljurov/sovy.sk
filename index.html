@@ -13,6 +13,43 @@
   </head>
   <body>
     <div id="app"></div>
+    <script>
+      // Diagnostic banner for old/unusual browsers (e.g. touch-screen TVs): shows the error and
+      // the browser version on screen. Plain ES5 on purpose: it must run even where the app can't.
+      (function () {
+        var shown = false;
+        function show(detail) {
+          if (shown || !document.body) return;
+          shown = true;
+          var box = document.createElement('div');
+          box.setAttribute('style', 'position:fixed;left:0;right:0;bottom:0;z-index:9999;padding:12px 16px;' +
+            'background:#2B2440;color:#fff;font:16px/1.4 sans-serif;white-space:pre-wrap;word-break:break-word');
+          box.textContent = 'Hra sa nespustila správne. / The app did not start correctly.\n' +
+            detail + '\n' + navigator.userAgent;
+          document.body.appendChild(box);
+        }
+        window.addEventListener('error', function (e) {
+          var t = e.target;
+          if (t && t !== window && t.tagName) {
+            // Only scripts matter; a missing font (offline) or image must not raise the banner.
+            if (t.tagName === 'SCRIPT') show('Súbor sa nenačítal / Failed to load: ' + t.src);
+          } else show((e.message || 'Error') + (e.filename ? ' @ ' + e.filename + ':' + e.lineno : ''));
+        }, true);
+        window.addEventListener('unhandledrejection', function (e) {
+          show('Promise: ' + (e.reason && e.reason.message ? e.reason.message : String(e.reason)));
+        });
+        window.addEventListener('load', function () {
+          setTimeout(function () {
+            var app = document.getElementById('app');
+            if (app && !app.firstChild) {
+              show(location.protocol === 'file:'
+                ? 'Spustite cez webový server, nie zo súboru. / Open it via a web server, not as a file (file://).'
+                : 'Prehliadač je pravdepodobne príliš starý. / The browser is probably too old.');
+            }
+          }, 3000);
+        });
+      })();
+    </script>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

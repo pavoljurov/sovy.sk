@@ -32,6 +32,7 @@ function render(): void {
   cleanup = null;
   mascot.hush();
   document.querySelectorAll('.overlay').forEach((o) => o.remove());
+  document.body.classList.remove('has-result');
   root.replaceChildren();
   const { slogan } = T();
   document.title = `${APP.name}${APP.tld} — ${slogan.before}${slogan.highlight}${slogan.after}`;
@@ -347,5 +348,6 @@ function showResult(game: GameModule, result: GameResult): void {
       ),
     ),
   );
+  document.body.classList.add('has-result');
   document.body.append(overlay);
 }
