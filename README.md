@@ -55,6 +55,7 @@ src/
     robot/   index.ts + robot.css    ← Robot Path (program arrows / forward+turn on a grid)
     chessmaze/ index.ts + logic.ts + chessmaze.css ← Chess Maze (move a rook/bishop/knight past guarded squares)
     flags/   index.ts + countries.ts + flags.css + svg/  ← World Flags (flag quiz; SVGs from flag-icons, MIT)
+    g2048/   index.ts + g2048.css    ← 2048 (slide and merge number tiles)
 ```
 
 ### How the app flows
@@ -86,7 +87,7 @@ interface GameModule {
   tagline: Text;
   color: string;              // home card colour (hex)
   icon: string;               // inline SVG markup, viewBox ~64×64, ink outline #2B2440
-  order?: number;             // home screen position (clock 1, math 2, sudoku 3, robot 4, chessmaze 5, flags 6)
+  order?: number;             // home screen position (clock 1, math 2, sudoku 3, robot 4, chessmaze 5, flags 6, g2048 7)
   hidden?: boolean;           // true = temporarily hidden from home screen
   howTo?: Text[];             // 2–4 short "how to play" steps, shown on the level-select screen
   levels: LevelInfo[];        // 2 or 3 items: { id: 'easy'|'medium'|'hard', description: Text, label?: Text }
@@ -299,6 +300,7 @@ export default game;
 | **Robot Path** | `games/robot` | 5×5 arrows / 6×6 + batteries / 6×6 forward+turn | The kid builds a command list, the owl executes it step by step. BFS validates reachability; the program-length limit is per level. 5 puzzles per session. |
 | **Chess Maze** | `games/chessmaze` | rook 6×6 / bishop 7×7 / knight 7×7 | Move your piece to the flag without stopping on a square an enemy piece (rook/bishop/knight) attacks. Enemies are static and cannot be captured; sliding pieces cannot jump over pieces. Dots show legal moves; a tap on a guarded square counts as a mistake and the attacker wiggles. "Danger" (3 per game) reveals guarded squares for the current puzzle. Pure logic in `logic.ts`; the generator uses BFS and requires the danger to make the route longer than on a free board. 5 puzzles per session. |
 | **World Flags** | `games/flags` | Europe, 3 choices / well-known world flags / all 195 countries | Two question types: "which country has this flag?" (name buttons) and "find the flag" (2×2 flag buttons). Country names (EN/SK), continents, the well-known set and groups of look-alike flags live in `countries.ts`. Easy avoids look-alikes as distractors; hard prefers them, then the same continent. A wrong answer reveals what it really is (its flag or name); a 2nd mistake gives a continent hint. Flag SVGs are copied from [flag-icons](https://github.com/lipis/flag-icons) (MIT, licence in `svg/`) and loaded as asset URLs. |
+| **2048** | `games/g2048` | reach 128 (only 2s spawn) / 512 / 2048, all 4×4 | Classic 2048. Move with a swipe on the board, the on-screen arrow pad, or the keyboard (arrows/WASD). Tiles are absolutely positioned and slide with a CSS transform; the inner `.g2-face` pops on a merge. 5 undos (snapshots); undos used = mistakes for stars. When no move is left, the owl offers Undo or Finish (0 stars, shows the biggest tile). The id is `g2048` because a CSS class cannot start with a digit. |
 
 ---
 
