@@ -7,6 +7,9 @@ owl in a graduation cap who talks to the kids in a speech bubble and shows up in
 - **Static site, no backend.** Progress (best stars) lives in the browser's `localStorage`.
 - **TypeScript only**, with no UI framework. Vite compiles it to plain JS/CSS in `dist/`.
 - **Two languages:** Slovak and English, switchable in the ⚙️ Settings panel.
+- **Runs on old browsers.** Touch-screen TVs often have an outdated built-in Android browser /
+  WebView. The current version is confirmed to work there; every new game must keep it that way
+  (see [Older browsers](#older-browsers-touch-screen-tvs)).
 - **Games are isolated plugins.** Adding or removing a game never touches the platform code.
 
 ---
@@ -30,11 +33,12 @@ rounded system font as the offline fallback.
 ## Project layout
 
 ```
-index.html                 ← single page; mounts #app
+index.html                 ← single page; mounts #app; ES5 error banner for old browsers
 public/favicon.svg         ← owl icon
 src/
   main.ts                  ← imports global CSS, calls startApp()
   platform/                ← THE SHELL. Shared by all games; normally not edited when adding games.
+    compat.ts              ← polyfills for old browsers (imported first in main.ts)
     types.ts               ← GameModule / GameContext / LevelInfo contract  ★ read first
     registry.ts            ← auto-discovers games via import.meta.glob('../games/*/index.ts')
     app.ts                 ← router + screens: home → level select → game → result overlay; settings modal
@@ -56,6 +60,7 @@ src/
     chessmaze/ index.ts + logic.ts + chessmaze.css ← Chess Maze (move a rook/bishop/knight past guarded squares)
     flags/   index.ts + countries.ts + flags.css + svg/  ← World Flags (flag quiz; SVGs from flag-icons, MIT)
     g2048/   index.ts + g2048.css    ← 2048 (slide and merge number tiles)
+    slovakia/ index.ts + places.ts + map.ts + slovakia.css ← Blind Map of Slovakia (tap where a place is; 1–4 players)
 ```
 
 ### How the app flows
@@ -87,7 +92,7 @@ interface GameModule {
   tagline: Text;
   color: string;              // home card colour (hex)
   icon: string;               // inline SVG markup, viewBox ~64×64, ink outline #2B2440
-  order?: number;             // home screen position (clock 1, math 2, sudoku 3, robot 4, chessmaze 5, flags 6, g2048 7)
+  order?: number;             // home screen position (clock 1, math 2, sudoku 3, robot 4, chessmaze 5, flags 6, g2048 7, slovakia 8)
   hidden?: boolean;           // true = temporarily hidden from home screen
   howTo?: Text[];             // 2–4 short "how to play" steps, shown on the level-select screen
   levels: LevelInfo[];        // 2 or 3 items: { id: 'easy'|'medium'|'hard', description: Text, label?: Text }
@@ -118,7 +123,9 @@ gives a `description` per level (and an optional custom `label`).
 3. **Build it** following the template and conventions below. Give it `howTo` steps, so a
    teacher or parent opening it for the first time knows what to do.
 4. **Check it:** run `npm run build` (must pass with no TS errors), then play every level in
-   both languages, at TV size (1920×1080) and at phone portrait size (≈390×844).
+   both languages, at TV size (1920×1080) and at phone portrait size (≈390×844). Check it
+   against the [Older browsers](#older-browsers-touch-screen-tvs) rules (no unsupported JS APIs,
+   CSS fallbacks in place).
 
 Remove a game by deleting its folder, or set `hidden: true` to hide it temporarily.
 
@@ -277,6 +284,12 @@ export default game;
   - English never uses a pronoun for the owl; it says "Huhu".
 - Slovak uses "Ťukni" for tap, "Štart" for go, and the level names Ľahká / Stredná / Ťažká.
 
+**Older browsers (touch-screen TVs)**
+
+See the full section [Older browsers](#older-browsers-touch-screen-tvs). Short version: no CSS
+`:has()`, `color-mix()`, container query units (`cq*`), `dvh`/`svh` or `aspect-ratio` without a
+fallback, and no new JS APIs without checking support.
+
 **Visual style**
 - Cartoon "sticker" look: thick ink outlines (`#2B2440`), solid drop shadow, rounded corners,
   bright flat colours.
@@ -287,6 +300,52 @@ export default game;
   (blue), `.btn-warn` (orange), `.btn-icon`; `.card`; animation classes `.shake` and `.pop`.
 - Draw graphics as inline SVG (not emoji, which render differently on TVs), with the same ink
   outline style. Game icons are 64×64 SVGs on a white circle.
+
+## Older browsers (touch-screen TVs)
+
+The main device is a touch-screen TV whose built-in browser is an **old Android Chrome / WebView**
+that never gets updated. The current version has been confirmed to work on it. **Every new game
+(and every change) must keep working there**, so treat modern web features as "needs a fallback".
+
+**What is already set up (don't remove it)**
+- `vite.config.ts` → `build.target: 'es2019'`: new JS *syntax* (`?.`, `??`, class fields…) is
+  compiled down automatically. This does **not** add missing *APIs* (methods/objects).
+- `src/platform/compat.ts`: polyfills, imported first in `main.ts`. Currently
+  `Element.replaceChildren`. If a new game needs another missing API, add a small polyfill here
+  (that is a valid reason to touch `src/platform/`) rather than inside the game.
+- `index.html`: a plain ES5 diagnostic banner. If the app fails to start, the TV shows the error
+  message and the browser's `userAgent` on screen. Use it to find the exact browser version when
+  something breaks. Keep it ES5.
+
+**JavaScript rules**
+- Syntax is fine (it is transpiled). For built-in **APIs**, check
+  [caniuse.com](https://caniuse.com) / MDN and avoid anything newer than about **Chrome 80**
+  unless it has a fallback or a polyfill in `compat.ts`. Examples to avoid or polyfill:
+  `Array.prototype.at`, `Object.hasOwn`, `String.prototype.replaceAll`, `structuredClone`,
+  `Array.prototype.findLast`, `Promise.any`, `AbortSignal.timeout`, `crypto.randomUUID`.
+- `replaceChildren` is safe (polyfilled). `ResizeObserver` (via `onResize()`) and Pointer Events
+  are used by existing games and work on the TV.
+- Wrap optional browser features (audio, fullscreen, vibration) in `try`/`catch` or feature
+  checks, and catch rejected promises (`.catch(() => {})`, not `void`), so a missing feature
+  never breaks the game.
+
+**CSS rules**: always give a fallback line first, or use `@supports`
+- `:has()` → toggle a class from JS instead (see `body.has-result` in `app.ts`).
+- `color-mix()` → plain colour first, `color-mix` inside `@supports` (see `.howto` in `styles.css`).
+- Container query units (`cqw`, `cqh`) → a `vw`/`vh` fallback declaration on the line before
+  (see `flags.css`).
+- `dvh`, `svh`, `lvh` → a `vh` declaration on the line before (see `clock.css`).
+- `aspect-ratio` → `@supports not (aspect-ratio: 1) { … }` with an explicit height (see
+  `clock.css`, `math.css`), or size square boards in px from `onResize()` like sudoku/robot.
+- Also avoid without a fallback: CSS nesting, `@container`, `@layer`, `:is()`/`:where()`,
+  `inset`, `translate`/`rotate`/`scale` as separate properties, `100svh`, `text-wrap`.
+  A fallback line before the modern one is enough: old browsers ignore what they don't understand.
+
+**Checking**
+- `npm run build` must pass, then test in an old browser if possible: the TV itself, or an old
+  Chromium / Android emulator WebView. The `userAgent` from the banner tells you which version to
+  emulate.
+- Before finishing a game, grep its files for the features listed above.
 
 ---
 
@@ -301,6 +360,7 @@ export default game;
 | **Chess Maze** | `games/chessmaze` | rook 6×6 / bishop 7×7 / knight 7×7 | Move your piece to the flag without stopping on a square an enemy piece (rook/bishop/knight) attacks. Enemies are static and cannot be captured; sliding pieces cannot jump over pieces. Dots show legal moves; a tap on a guarded square counts as a mistake and the attacker wiggles. "Danger" (3 per game) reveals guarded squares for the current puzzle. Pure logic in `logic.ts`; the generator uses BFS and requires the danger to make the route longer than on a free board. 5 puzzles per session. |
 | **World Flags** | `games/flags` | Europe, 3 choices / well-known world flags / all 195 countries | Two question types: "which country has this flag?" (name buttons) and "find the flag" (2×2 flag buttons). Country names (EN/SK), continents, the well-known set and groups of look-alike flags live in `countries.ts`. Easy avoids look-alikes as distractors; hard prefers them, then the same continent. A wrong answer reveals what it really is (its flag or name); a 2nd mistake gives a continent hint. Flag SVGs are copied from [flag-icons](https://github.com/lipis/flag-icons) (MIT, licence in `svg/`) and loaded as asset URLs. |
 | **2048** | `games/g2048` | reach 128 (only 2s spawn) / 512 / 2048, all 4×4 | Classic 2048. Move with a swipe on the board, the on-screen arrow pad, or the keyboard (arrows/WASD). Tiles are absolutely positioned and slide with a CSS transform; the inner `.g2-face` pops on a merge. 5 undos (snapshots); undos used = mistakes for stars. When no move is left, the owl offers Undo or Finish (0 stars, shows the biggest tile). The id is `g2048` because a CSS class cannot start with a digit. |
+| **Blind Map of Slovakia** | `games/slovakia` | famous places, region highlighted / well-known places, region borders / all ~300 places | A place name is shown; each of 1–4 players taps the map in turn (other players' pins stay hidden), then the real spot, the 10/30 km rings and each distance appear. Score = km off (haversine), lowest total wins; stars from the best player's average km. `places.ts`: ~300 towns, castles, peaks, lakes, caves, villages, churches, spas and sights with tier (1 famous … 3 all) and region; coordinates and names from Wikidata (CC0), names tidied by hand. `map.ts`: Slovakia, regions, neighbours and rivers from Natural Earth 1:10m (public domain), simplified and projected to km (`project`/`unproject`). Places not seen recently are picked first (`sovy:slovakia:recent`), so the pool cycles before repeating; one game mixes categories and never asks two places within 15 km. |
 
 ---
 
