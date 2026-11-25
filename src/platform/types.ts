@@ -67,6 +67,11 @@ export interface GameModule {
   icon: string;
   /** Sort order on the home screen (lower = first). */
   order?: number;
+  /**
+   * Max number of children who can play together (e.g. 4). Leave out for single-player games.
+   * Values > 1 show a "multiplayer" badge on the home card.
+   */
+  players?: number;
   /** Set true to temporarily hide a game without deleting it. */
   hidden?: boolean;
   /**

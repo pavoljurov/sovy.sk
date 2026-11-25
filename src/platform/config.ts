@@ -52,6 +52,7 @@ const en = {
     playAgain: 'Play again',
     levels: 'Levels',
     restartNote: 'Changing the language starts the game again.',
+    players: (n: number) => `1–${n} players, play together`,
   },
 };
 
@@ -100,6 +101,7 @@ const sk: typeof en = {
     playAgain: 'Hrať znova',
     levels: 'Úrovne',
     restartNote: 'Po zmene jazyka sa hra spustí od začiatku.',
+    players: (n: number) => `1–${n} hráči, hrajte spolu`,
   },
 };
 

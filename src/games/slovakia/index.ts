@@ -474,6 +474,7 @@ function mount(stage: HTMLElement, ctx: GameContext): () => void {
 const game: GameModule = {
   id: 'slovakia',
   order: 8,
+  players: 4,
   title: { en: 'Blind Map of Slovakia', sk: 'Slepá mapa Slovenska' },
   tagline: { en: 'Find towns, castles and mountains', sk: 'Nájdi mestá, hrady a vrchy' },
   color: '#1FC2AE',

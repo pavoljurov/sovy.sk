@@ -160,6 +160,11 @@ function homeScreen(): HTMLElement {
         },
       },
       h('div', { class: 'game-card-icon', html: g.icon }),
+      g.players && g.players > 1
+        ? h('div', { class: 'game-card-players', title: T().ui.players(g.players), 'aria-label': T().ui.players(g.players) },
+            h('span', { class: 'game-card-players-icon', html: ICONS.players }),
+            `1–${g.players}`)
+        : null,
       h('div', { class: 'game-card-title' }, tx(g.title)),
       h('div', { class: 'game-card-tag' }, tx(g.tagline)),
       h(
