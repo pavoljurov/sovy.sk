@@ -54,6 +54,25 @@ const en = {
     restartNote: 'Changing the language starts the game again.',
     players: (n: number) => `1–${n} players, play together`,
   },
+  /** Shared multiplayer texts (party.ts). */
+  party: {
+    howMany: 'How many players?',
+    hello: 'Play alone or race your friends – up to 4 players!',
+    players: (n: number) => (n === 1 ? '1 player' : `${n} players`),
+    rules: 'Right answer = 1 point. Fastest right answer = 2 points!',
+    player: (i: number) => `Player ${i}`,
+    intro: 'Everyone taps in their own colour column. Be quick and right!',
+    hurry: 'Quick, the time is running!',
+    voted: 'Voted',
+    fastest: (p: string) => `${p} was the fastest!`,
+    everyone: 'Everyone got it right!',
+    nobody: 'Nobody got it this time.',
+    next: 'Next',
+    results: 'Results',
+    points: (n: number) => (n === 1 ? '1 point' : `${n} points`),
+    winner: (p: string, pts: string) => `${p} wins with ${pts}!`,
+    tie: (ps: string, pts: string) => `It’s a tie! ${ps}: ${pts}.`,
+  },
 };
 
 const sk: typeof en = {
@@ -102,6 +121,24 @@ const sk: typeof en = {
     levels: 'Úrovne',
     restartNote: 'Po zmene jazyka sa hra spustí od začiatku.',
     players: (n: number) => `1–${n} hráči, hrajte spolu`,
+  },
+  party: {
+    howMany: 'Koľko hráčov hrá?',
+    hello: 'Hrať sa dá aj s kamarátmi – až 4 hráči!',
+    players: (n) => (n === 1 ? '1 hráč' : `${n} hráči`),
+    rules: 'Správna odpoveď = 1 bod. Najrýchlejšia správna = 2 body!',
+    player: (i) => `Hráč ${i}`,
+    intro: 'Každý ťuká vo svojom farebnom stĺpci. Rýchlo a správne!',
+    hurry: 'Rýchlo, čas beží!',
+    voted: 'Hotovo',
+    fastest: (p) => `${p} – najrýchlejšia odpoveď!`,
+    everyone: 'Všetci správne!',
+    nobody: 'Tentoraz bez správnej odpovede.',
+    next: 'Ďalej',
+    results: 'Výsledky',
+    points: (n) => (n === 1 ? '1 bod' : n >= 2 && n <= 4 ? `${n} body` : `${n} bodov`),
+    winner: (p, pts) => `Vyhráva ${p} – ${pts}!`,
+    tie: (ps, pts) => `Remíza! ${ps}: ${pts}.`,
   },
 };
 

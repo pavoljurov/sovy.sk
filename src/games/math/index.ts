@@ -3,6 +3,7 @@ import { h, replay } from '../../platform/dom';
 import { pick, randInt, shuffle, starsFromMistakes } from '../../platform/util';
 import { praise } from '../../platform/config';
 import { pickLang } from '../../platform/i18n';
+import { createParty, playerPicker, type Party } from '../../platform/party';
 import './math.css';
 
 const ICON = `<svg viewBox="0 0 64 64"><ellipse cx="22" cy="24" rx="14" ry="16" fill="#FF5D8F" stroke="#2B2440" stroke-width="4"/><ellipse cx="42" cy="28" rx="14" ry="16" fill="#FFD23F" stroke="#2B2440" stroke-width="4"/><path d="M22 40c0 8 6 10 6 18M42 44c0 6-4 8-4 14" stroke="#2B2440" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M16 24h12M22 18v12" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M36 28h12" stroke="#2B2440" stroke-width="4" stroke-linecap="round"/></svg>`;
@@ -87,68 +88,36 @@ function mount(stage: HTMLElement, ctx: GameContext): () => void {
   const S = pickLang({ en, sk });
   const equation = h('div', { class: 'm-eq' });
   const visual = h('div', { class: 'm-visual-wrap' });
-  const streakEl = h('div', { class: 'm-streak' });
-  const sky = h('div', { class: 'm-sky' });
-  stage.append(h('div', { class: 'm-wrap' }, h('div', { class: 'm-top' }, equation, visual, streakEl), sky));
+  const root = h('div', { class: 'm-wrap m-setup-mode' });
+  stage.append(root);
 
-  let n = 0, mistakes = 0, streak = 0, alive = true;
-  let prev = '';
+  let alive = true;
+  let party: Party | null = null;
   const later = (fn: () => void, ms: number) => setTimeout(() => alive && fn(), ms);
 
-  function next() {
-    if (n >= TOTAL) return ctx.finish({ stars: starsFromMistakes(mistakes, 1, 3) });
-    ctx.setProgress(n, TOTAL);
+  let prev = '';
+  function nextQuestion(): Q {
     let q: Q;
     do q = makeQuestion(cfg);
     while (`${q.a}${q.op}${q.b}` === prev);
     prev = `${q.a}${q.op}${q.b}`;
-    const answer = q[q.hide];
+    return q;
+  }
 
+  /** Draws the equation (with "?" in the hidden slot) and the counting dots. */
+  function showQuestion(q: Q) {
     const slot = (key: 'a' | 'b' | 'c') =>
       q.hide === key ? h('span', { class: 'm-num m-hole' }, '?') : h('span', { class: 'm-num' }, String(q[key]));
     equation.replaceChildren(slot('a'), h('span', { class: 'm-op' }, q.op === '+' ? '+' : '−'), slot('b'), h('span', { class: 'm-op' }, '='), slot('c'));
     replay(equation, 'pop');
     visual.replaceChildren(cfg.dots && q.hide === 'c' ? dots(q) : '');
+  }
 
-    let wrongHere = 0;
-    const balloons = options(answer, cfg.max).map((v, i) => {
-      const b: HTMLButtonElement = h(
-        'button',
-        {
-          class: 'm-balloon',
-          style: { '--bc': BALLOON_COLORS[i], '--delay': `${-i * 0.7}s`, '--sway': `${randInt(2, 4)}s` },
-          onClick: () => {
-            if (b.disabled) return;
-            if (v === answer) {
-              balloons.forEach((x) => (x.disabled = true));
-              b.classList.add('popped');
-              equation.querySelector('.m-hole')!.textContent = String(answer);
-              equation.querySelector('.m-hole')!.classList.add('solved');
-              ctx.sfx.pop();
-              ctx.sfx.correct();
-              ctx.celebrate('small');
-              if (wrongHere === 0) streak++;
-              streakEl.textContent = streak >= 2 ? S.streak(streak) : '';
-              ctx.mascot.say(streak >= 3 && streak % 3 === 0 ? S.onFire(streak) : praise(), 'happy', 1800);
-              n++;
-              later(next, 1300);
-            } else {
-              mistakes++;
-              wrongHere++;
-              streak = 0;
-              streakEl.textContent = '';
-              b.disabled = true;
-              b.classList.add('wrong');
-              ctx.sfx.wrong();
-              ctx.mascot.say(hintFor(q), 'think', 4000);
-            }
-          },
-        },
-        h('span', null, String(v)),
-      );
-      return b;
-    });
-    sky.replaceChildren(...balloons);
+  function fillHole(q: Q) {
+    const hole = equation.querySelector('.m-hole');
+    if (!hole) return;
+    hole.textContent = String(q[q.hide]);
+    hole.classList.add('solved');
   }
 
   function hintFor(q: Q): string {
@@ -158,16 +127,112 @@ function mount(stage: HTMLElement, ctx: GameContext): () => void {
     return S.hintMinus(q.a, q.b);
   }
 
-  ctx.mascot.say(S.intro, 'wave', 3500);
-  next();
+  /* ---------- 1 player: floating balloons, retry until right, streaks ---------- */
+  function playSolo() {
+    const streakEl = h('div', { class: 'm-streak' });
+    const sky = h('div', { class: 'm-sky' });
+    root.className = 'm-wrap';
+    root.replaceChildren(h('div', { class: 'm-top' }, equation, visual, streakEl), sky);
+    let n = 0, mistakes = 0, streak = 0;
+
+    function next() {
+      if (n >= TOTAL) return ctx.finish({ stars: starsFromMistakes(mistakes, 1, 3) });
+      ctx.setProgress(n, TOTAL);
+      const q = nextQuestion();
+      const answer = q[q.hide];
+      showQuestion(q);
+
+      let wrongHere = 0;
+      const balloons = options(answer, cfg.max).map((v, i) => {
+        const b: HTMLButtonElement = h(
+          'button',
+          {
+            class: 'm-balloon',
+            style: { '--bc': BALLOON_COLORS[i], '--delay': `${-i * 0.7}s`, '--sway': `${randInt(2, 4)}s` },
+            onClick: () => {
+              if (b.disabled) return;
+              if (v === answer) {
+                balloons.forEach((x) => (x.disabled = true));
+                b.classList.add('popped');
+                fillHole(q);
+                ctx.sfx.pop();
+                ctx.sfx.correct();
+                ctx.celebrate('small');
+                if (wrongHere === 0) streak++;
+                streakEl.textContent = streak >= 2 ? S.streak(streak) : '';
+                ctx.mascot.say(streak >= 3 && streak % 3 === 0 ? S.onFire(streak) : praise(), 'happy', 1800);
+                n++;
+                later(next, 1300);
+              } else {
+                mistakes++;
+                wrongHere++;
+                streak = 0;
+                streakEl.textContent = '';
+                b.disabled = true;
+                b.classList.add('wrong');
+                ctx.sfx.wrong();
+                ctx.mascot.say(hintFor(q), 'think', 4000);
+              }
+            },
+          },
+          h('span', null, String(v)),
+        );
+        return b;
+      });
+      sky.replaceChildren(...balloons);
+    }
+
+    ctx.mascot.say(S.intro, 'wave', 3500);
+    next();
+  }
+
+  /* ---------- 2–4 players: colour lanes, one answer each, reveal together ---------- */
+  function playMulti(count: number) {
+    let n = 0;
+    const p = createParty(ctx, count, () => {
+      n++;
+      if (n >= TOTAL) {
+        const r = p.result();
+        ctx.finish({ stars: starsFromMistakes(TOTAL - r.bestCorrect, 1, 3), message: r.message });
+      } else ask();
+    });
+    party = p;
+    root.className = 'm-wrap m-multi';
+    root.replaceChildren(h('div', { class: 'm-top' }, equation, visual, p.nextBtn), p.timer, p.lanes);
+
+    function ask() {
+      ctx.setProgress(n, TOTAL);
+      const q = nextQuestion();
+      const answer = q[q.hide];
+      showQuestion(q);
+      p.ask<number>({
+        options: options(answer, cfg.max),
+        last: n + 1 >= TOTAL,
+        isRight: (v) => v === answer,
+        button: (v, _pl, i) =>
+          h('button', { class: 'btn m-lballoon', style: { '--bc': BALLOON_COLORS[i] } }, h('span', null, String(v))),
+        onReveal: () => {
+          fillHole(q);
+          ctx.sfx.pop();
+          return `${q.a} ${q.op === '+' ? '+' : '−'} ${q.b} = ${q.c}`;
+        },
+      });
+    }
+
+    ask();
+  }
+
+  root.replaceChildren(playerPicker(ctx, (k) => (k === 1 ? playSolo() : playMulti(k))));
   return () => {
     alive = false;
+    if (party) party.destroy();
   };
 }
 
 const game: GameModule = {
   id: 'math',
   order: 2,
+  players: 4,
   title: { en: 'Math Balloons', sk: 'Počtové balóny' },
   tagline: { en: 'Plus and minus – pop the answer!', sk: 'Plus a mínus – praskni správny balón!' },
   color: '#FF5D8F',
@@ -176,6 +241,7 @@ const game: GameModule = {
     { en: 'Solve the example.', sk: 'Vyrieš príklad.' },
     { en: 'Pop the balloon with the right answer.', sk: 'Praskni balónik so správnou odpoveďou.' },
     { en: 'Get several right in a row for a streak!', sk: 'Viac správnych odpovedí za sebou je séria!' },
+    { en: 'Up to 4 players: everyone taps in their own colour column. The fastest right answer gets 2 points!', sk: 'Až 4 hráči: každý ťuká vo svojom farebnom stĺpci. Najrýchlejšia správna odpoveď má 2 body!' },
   ],
   levels: [
     { id: 'easy', description: { en: 'Numbers up to 10, with dots to count', sk: 'Čísla do 10 s bodkami na počítanie' } },

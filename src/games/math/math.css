@@ -56,3 +56,33 @@
   .m-sky { display: grid; grid-template-columns: 1fr 1fr; justify-items: center; align-content: space-evenly; }
   .m-balloon { width: clamp(4em, 22vw, 8em); }
 }
+
+/* ---------- player count ---------- */
+.m-wrap.m-setup-mode { justify-content: center; align-items: center; }
+
+/* ---------- 2–4 players ---------- */
+.m-wrap.m-multi { gap: 0.6em; padding: 0.8em 1em; }
+.m-multi .m-top { flex: 1; min-height: 0; justify-content: center; gap: 0.6em; }
+.m-multi .pty-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em; }
+.pty-lane .btn.m-lballoon {
+  --b: var(--bc); min-height: 2.4em; padding: 0 0.2em; font-size: 1.5em;
+  border-radius: 50% 50% 47% 47% / 55% 55% 45% 45%;
+  background: radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.7) 0 8%, transparent 9%), var(--b);
+}
+.m-lballoon span {
+  font-size: 1.25em; font-weight: 800; color: #fff; -webkit-text-stroke: 0.08em #2b2440; paint-order: stroke fill;
+  font-variant-numeric: tabular-nums;
+}
+/* reveal: own right pick = green balloon, own wrong pick = grey balloon,
+   missed right answer = white balloon with a green ring (balloon colours include green, so it must not keep its own) */
+.pty-lane .btn.m-lballoon.right { --b: #fff; box-shadow: 0 0 0 0.2em #fff, 0 0 0 0.38em var(--green); }
+.pty-lane .btn.m-lballoon.right.mine { --b: var(--green); }
+.pty-lane .btn.m-lballoon.wrong { --b: #b9b3c6; text-decoration: none; }
+
+@media (max-aspect-ratio: 1/1) {
+  .m-wrap.m-multi { padding: 0.5em; gap: 0.45em; }
+  .m-multi .m-eq { font-size: 2.4em; }
+  .m-multi .m-visual { font-size: 1.2em; }
+  .m-multi .pty-opts { gap: 0.3em; }
+  .pty-lane .btn.m-lballoon { font-size: 1.1em; min-height: 2.3em; }
+}

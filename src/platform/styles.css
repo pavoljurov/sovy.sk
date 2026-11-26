@@ -382,3 +382,68 @@ body.has-result .mascot-slot { z-index: 55; } /* class instead of :has() for old
 .choice .flag svg { width: 100%; height: 100%; }
 .settings-note { font-size: 0.9em; opacity: 0.7; margin: -0.4em 0 0; }
 .settings-card .btn-go { align-self: center; min-width: 8em; }
+
+/* ---------- party multiplayer (party.ts): player picker + colour lanes ---------- */
+.pty-setup { display: flex; flex-direction: column; align-items: center; gap: 1.2em; }
+.pty-setup-q { font-size: 1.9em; font-weight: 800; text-align: center; }
+.pty-counts { display: grid; grid-template-columns: repeat(4, 9.5em); justify-content: center; gap: 1em; }
+.pty-count {
+  --b: #fff; color: var(--ink); flex-direction: column; gap: 0.3em;
+  min-height: 6.5em; font-size: 1.15em; padding: 0.6em 0.5em;
+}
+.pty-count-icons { display: flex; gap: 0.05em; height: 2.4em; align-items: flex-end; }
+.pty-count-icons svg { width: 1.5em; height: 1.75em; }
+.pty-rules { font-size: 1.05em; text-align: center; opacity: 0.75; max-width: 30em; }
+
+.pty-timer {
+  flex: none; height: 0.6em; border-radius: 1em; overflow: hidden; visibility: hidden;
+  background: #efe5d3; border: 0.1em solid var(--ink);
+}
+.pty-timer.on { visibility: visible; }
+.pty-timer i { display: block; height: 100%; width: 100%; background: var(--orange); }
+.pty-next { min-width: 7em; }
+
+.pty-lanes { flex: none; display: grid; gap: 0.7em; grid-template-columns: repeat(2, minmax(0, 1fr)); touch-action: none; }
+.pty-lanes.n3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.pty-lanes.n4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.pty-lane {
+  --c: #ff4d5e; --t: #ffe6e8;
+  display: flex; flex-direction: column; gap: 0.45em; min-width: 0; min-height: 0; padding: 0.45em 0.55em 0.6em;
+  background: var(--t); border: 0.16em solid var(--ink); border-top: 0.55em solid var(--c); border-radius: 1em;
+}
+.pty-head { display: flex; align-items: center; gap: 0.4em; min-height: 2.1em; }
+.pty-badge {
+  flex: none; width: 1.9em; height: 1.9em; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background: var(--c); border: 0.13em solid var(--ink); font-size: 1.15em; font-weight: 800; color: var(--ink);
+}
+.pty-status { flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.15em; font-size: 1.3em; font-weight: 800; color: var(--ink); }
+.pty-status.ok { color: #2e9e3c; }
+.pty-status.no { opacity: 0.45; }
+.pty-bolt svg { width: 1.2em; height: 1.2em; }
+.pty-score { flex: none; display: flex; align-items: center; gap: 0.15em; font-size: 1.4em; font-weight: 800; }
+.pty-score svg { width: 1em; height: 1em; fill: var(--yellow); stroke: var(--ink); stroke-width: 1.8; stroke-linejoin: round; }
+.pty-opts { display: flex; flex-direction: column; gap: 0.45em; min-height: 0; }
+
+/* default look for .btn options in a lane (games may restyle) */
+.pty-lane .btn { --b: #fff; color: var(--ink); width: 100%; min-width: 0; }
+.pty-lane .btn:disabled { filter: none; }
+/* voted: every option looks the same, so nobody can see (and copy) which one was picked */
+.pty-lane.voted:not(.revealed) button:disabled { opacity: 0.35; }
+.pty-status.voted { font-size: 1.1em; white-space: nowrap; min-width: 0; }
+/* reveal: own pick green when right, grey when wrong; a missed right answer only gets a green outline */
+.pty-lane .btn.right { box-shadow: inset 0 0 0 0.22em var(--green), 0 var(--drop) 0 var(--ink); }
+.pty-lane .btn.right.mine { --b: var(--green); color: #fff; box-shadow: 0 var(--drop) 0 var(--ink); }
+.pty-lane .btn.wrong { --b: #c9c4d4; text-decoration: line-through; }
+.pty-lane.revealed button:disabled:not(.right):not(.wrong) { opacity: 0.3; }
+
+@media (max-aspect-ratio: 1/1) {
+  .pty-counts { grid-template-columns: repeat(2, 8.5em); }
+  .pty-count { min-height: 5.5em; }
+  .pty-setup-q { font-size: 1.5em; }
+  .pty-lanes.n3, .pty-lanes.n4 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.45em; }
+  .pty-lane { padding: 0.3em 0.35em 0.4em; gap: 0.3em; border-top-width: 0.4em; }
+  .pty-head { min-height: 1.7em; }
+  .pty-badge { width: 1.6em; height: 1.6em; font-size: 1em; }
+  .pty-status, .pty-score { font-size: 1.1em; }
+  .pty-opts { gap: 0.3em; }
+}

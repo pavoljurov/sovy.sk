@@ -58,3 +58,58 @@
   .clk-opt { font-size: 1.7em; padding: 0 0.3em; min-width: 0; }
   .clk-options { gap: 0.6em; }
 }
+
+/* ---------- player count ---------- */
+.clk.clk-setup-mode { display: flex; justify-content: center; align-items: center; }
+
+/* ---------- 2–4 players ---------- */
+.clk.clk-multi { display: flex; flex-direction: column; align-items: stretch; gap: 0.6em; padding: 0.8em 1em; }
+.clk-mtop { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; gap: 1.5em; }
+.clk-multi .clk-wrap { flex: none; width: 16em; height: 16em; max-width: none; }
+.clk-multi.mode-find .clk-mtop { flex: none; }
+.clk-multi.mode-find .clk-wrap { display: none; }
+.clk-mside { flex: 0 1 auto; display: flex; flex-direction: column; align-items: center; gap: 0.55em; min-width: 0; max-width: 24em; text-align: center; }
+.clk-multi.mode-find .clk-mside { flex-direction: row; flex-wrap: wrap; justify-content: center; max-width: none; }
+.clk-multi.mode-find .clk-words { margin-bottom: 0; }
+.clk-multi .clk-target { font-size: 2.6em; }
+.clk-answer { font-size: 1.25em; color: #7b5cff; line-height: 1.2; }
+.clk-answer b { color: #2b2440; font-size: 1.3em; font-variant-numeric: tabular-nums; }
+
+.clk-multi .pty-opts { display: grid; grid-template-columns: 1fr; }
+.clk-multi .pty-opts.n4 { grid-template-columns: 1fr 1fr; }
+.clk-lopt { font-size: 1.5em; min-height: 1.8em; padding: 0 0.3em; font-variant-numeric: tabular-nums; }
+
+/* "find the clock": small clock faces in every lane */
+.clk-multi.mode-find .pty-lanes { flex: 1; min-height: 0; }
+.clk-multi.mode-find .pty-opts {
+  flex: 1; display: flex; flex-direction: row; flex-wrap: wrap; align-content: center; justify-content: center;
+  gap: 0.5em; padding: 0.3em; overflow: hidden;
+}
+.clk-pick {
+  position: relative; flex: none; padding: 0; border: 0; background: none; cursor: pointer; border-radius: 50%;
+  width: 6em; width: var(--cs, 6em); height: 6em; height: var(--cs, 6em);
+}
+.clk-pick svg { width: 100%; height: 100%; pointer-events: none; }
+.clk-pick:disabled { cursor: default; }
+/* reveal: own right pick = thick green ring + green rim, missed right answer = thin green ring, own wrong pick = grey rim */
+.clk-pick.right { box-shadow: 0 0 0 0.18em var(--green); }
+.clk-pick.right.mine { box-shadow: 0 0 0 0.35em var(--green); }
+.clk-pick.right.mine .clk-rim { fill: var(--green); }
+.clk-pick.wrong .clk-rim { fill: #b9b3c6; }
+.clk-pick-label {
+  position: absolute; left: 50%; bottom: -0.2em; transform: translateX(-50%);
+  background: #8a8399; color: #fff; font-weight: 800; padding: 0 0.4em; border-radius: 0.5em; border: 0.1em solid #2b2440;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-aspect-ratio: 1/1) {
+  .clk.clk-multi { padding: 0.5em; gap: 0.45em; }
+  .clk-mtop { flex-direction: column; gap: 0.5em; }
+  .clk-multi .clk-wrap { width: min(100%, 45vh); }
+  .clk-mside { max-width: none; gap: 0.35em; }
+  .clk-multi .clk-target { font-size: 1.9em; }
+  .clk-answer { font-size: 1.05em; }
+  .clk-lopt { font-size: 1.15em; min-height: 2em; }
+  .clk-multi .pty-opts.n4 { gap: 0.3em; }
+  .clk-multi .clk-part { font-size: 1.05em; }
+}

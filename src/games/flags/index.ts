@@ -50,6 +50,7 @@ const en = {
   player: (i: number) => `Player ${i}`,
   introMulti: 'Everyone taps in their own colour column. Be quick and right!',
   hurry: 'Quick, the time is running!',
+  voted: 'Voted',
   fastest: (p: string) => `${p} was the fastest!`,
   everyone: 'Everyone got it right!',
   nobody: 'Nobody got it this time.',
@@ -77,6 +78,7 @@ const sk: typeof en = {
   player: (i) => `Hráč ${i}`,
   introMulti: 'Každý ťuká vo svojom farebnom stĺpci. Rýchlo a správne!',
   hurry: 'Rýchlo, čas beží!',
+  voted: 'Hotovo',
   fastest: (p) => `${p} – najrýchlejšia odpoveď!`,
   everyone: 'Všetci správne!',
   nobody: 'Tentoraz bez správnej odpovede.',
@@ -399,21 +401,22 @@ function mount(stage: HTMLElement, ctx: GameContext): () => void {
         ? h('button', { class: 'btn flg-opt' }, h('span', { class: 'flg-opt-text' }, name(c)))
         : h('button', { class: 'flg-pick' }, flagImg(c, 'flg-img'), h('span', { class: 'flg-pick-label' }, name(c)));
       // pointerdown, not click: browsers drop "click" when two fingers touch the screen at once
-      b.addEventListener('pointerdown', (e) => { e.preventDefault(); choose(p, c, b); });
-      b.addEventListener('click', () => choose(p, c, b));
+      b.addEventListener('pointerdown', (e) => { e.preventDefault(); choose(p, c); });
+      b.addEventListener('click', () => choose(p, c));
       return b;
     }
 
-    function choose(p: Player, c: Country, b: HTMLButtonElement) {
+    function choose(p: Player, c: Country) {
       if (phase !== 'answer' || p.pick) return;
       p.pick = c;
       p.order = answered++;
       ctx.sfx.tap();
+      // no highlight on the picked button – the neighbours must not see what was chosen
       p.opts.querySelectorAll('button').forEach((x) => (x.disabled = true));
-      b.classList.add('picked');
-      p.lane.classList.add('locked');
-      p.status.textContent = '✓';
-      replay(b, 'pop');
+      p.lane.classList.add('voted');
+      p.status.className = 'flg-status voted';
+      p.status.textContent = `✓ ${S.voted}`;
+      replay(p.status, 'pop');
       if (answered >= players.length) reveal();
       else if (answered === 1) startCountdown();
     }
@@ -444,8 +447,8 @@ function mount(stage: HTMLElement, ctx: GameContext): () => void {
         p.lane.className = `flg-lane revealed ${ok ? 'got' : 'miss'}`;
         p.opts.querySelectorAll('button').forEach((b, i) => {
           b.disabled = true;
-          b.classList.remove('picked');
           const c = p.shown[i];
+          if (c === p.pick) b.classList.add('mine');
           if (c === target) b.classList.add('right');
           else if (c === p.pick) {
             b.classList.add('wrong');
