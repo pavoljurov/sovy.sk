@@ -62,6 +62,9 @@ src/
     flags/   index.ts + countries.ts + flags.css + svg/  ← World Flags (flag quiz; SVGs from flag-icons, MIT)
     g2048/   index.ts + g2048.css    ← 2048 (slide and merge number tiles)
     slovakia/ index.ts + places.ts + map.ts + slovakia.css ← Blind Map of Slovakia (tap where a place is; 1–4 players)
+    words/   index.ts + logic.ts + words.css + data/ ← Word Grid (find words in a 3×3 letter grid)
+scripts/
+  build-words.mjs          ← offline: rebuilds the Word Grid word lists (not part of the site build)
 ```
 
 ### How the app flows
@@ -93,7 +96,7 @@ interface GameModule {
   tagline: Text;
   color: string;              // home card colour (hex)
   icon: string;               // inline SVG markup, viewBox ~64×64, ink outline #2B2440
-  order?: number;             // home screen position (clock 1, math 2, sudoku 3, robot 4, chessmaze 5, flags 6, g2048 7, slovakia 8)
+  order?: number;             // home screen position (clock 1, math 2, sudoku 3, robot 4, chessmaze 5, flags 6, g2048 7, slovakia 8, words 9)
   hidden?: boolean;           // true = temporarily hidden from home screen
   players?: number;           // max kids playing together (e.g. 4); > 1 shows a "1–4" multiplayer badge on the home card
   howTo?: Text[];             // 2–4 short "how to play" steps, shown on the level-select screen
@@ -364,6 +367,7 @@ that never gets updated. The current version has been confirmed to work on it. *
 | **World Flags** | `games/flags` | Europe, 3 choices / well-known world flags / all 195 countries (1–4 players) | Two question types: "which country has this flag?" (name buttons) and "find the flag" (2×2 flag buttons). Country names (EN/SK), continents, the well-known set and groups of look-alike flags live in `countries.ts`. Easy avoids look-alikes as distractors; hard prefers them, then the same continent. A wrong answer reveals what it really is (its flag or name); a 2nd mistake gives a continent hint. **1–4 players:** solo keeps retry + owl hints; with 2–4 players each kid gets a colour lane at the bottom with the same options in its own shuffled order (no copying the neighbour), one answer each (a lane that answered only shows "✓ Voted", the pick is not highlighted), answers stay hidden until everyone has answered or a 10 s countdown (started by the first answer) runs out. Right = 1 point, fastest right = 2; stars from the best player's right answers. Lane buttons react on `pointerdown` (simultaneous multi-touch drops `click`) and lanes have `touch-action: none` (no pinch-zoom). Flag SVGs are copied from [flag-icons](https://github.com/lipis/flag-icons) (MIT, licence in `svg/`) and loaded as asset URLs. |
 | **2048** | `games/g2048` | reach 128 (only 2s spawn) / 512 / 2048, all 4×4 | Classic 2048. Move with a swipe on the board, the on-screen arrow pad, or the keyboard (arrows/WASD). Tiles are absolutely positioned and slide with a CSS transform; the inner `.g2-face` pops on a merge. 5 undos (snapshots); undos used = mistakes for stars. When no move is left, the owl offers Undo or Finish (0 stars, shows the biggest tile). The id is `g2048` because a CSS class cannot start with a digit. |
 | **Blind Map of Slovakia** | `games/slovakia` | famous places, region highlighted / well-known places, region borders / all ~300 places | A place name is shown; each of 1–4 players taps the map in turn (other players' pins stay hidden), then the real spot, the 10/30 km rings and each distance appear. Score = km off (haversine), lowest total wins; stars from the best player's average km. `places.ts`: ~300 towns, castles, peaks, lakes, caves, villages, churches, spas and sights with tier (1 famous … 3 all) and region; coordinates and names from Wikidata (CC0), names tidied by hand. `map.ts`: Slovakia, regions, neighbours and rivers from Natural Earth 1:10m (public domain), simplified and projected to km (`project`/`unproject`). Places not seen recently are picked first (`sovy:slovakia:recent`), so the pool cycles before repeating; one game mixes categories and never asks two places within 15 km. |
+| **Word Grid** | `games/words` | short everyday words, first letters shown / up to 6 letters / all lengths + one 6+ letter word | Boggle-style 3×3 grid: tap (or swipe across) touching letters, diagonals included, each tile once per word. Slovak "ch" is one tile (encoded as `C` internally). 5 boards per game; each board shows empty slots for its target words. "Show all words" reveals the missed ones (tap a word to trace it on the grid), then "Next board". Points: 3 letters = 1, 4 = 2, 5 = 3, 6+ = 5, all words on a board +5, any other real word +1 (bonus), hint −1. Stars from the average share of words found; best score per level in `sovy:words:best:<level>`. `logic.ts`: solver (DFS + binary search over a sorted word array) and generator (plants a word along a random path, fills the rest by letter frequency, keeps boards whose word count fits the level). Words load on demand per language (`import('…?raw')`). `data/<lang>-target.tsv`: hand-curated words children know, base forms only, tier 1 (very common) / 2; edit by hand, then run `node scripts/build-words.mjs`, which checks them and regenerates `data/<lang>-accept.txt` (bonus words: Hunspell base forms of 3–7 letters, rude words removed; SCOWL / MPL licences in `data/`). |
 
 ---
 
@@ -386,6 +390,7 @@ that never gets updated. The current version has been confirmed to work on it. *
 - Seeded "puzzle of the day" so a whole group plays the same puzzles.
 - Hand-crafted level packs (e.g. fixed robot maps) next to the random generators.
 - More games: shapes & symmetry, money counting, multiplication, spelling (SK diacritics), memory pairs.
+- Word Grid: inflected forms (plurals, Slovak cases) as targets; a bigger 4×4 level.
 
 ---
 
@@ -393,6 +398,12 @@ that never gets updated. The current version has been confirmed to work on it. *
 
 The **code** is licensed under [0BSD](LICENSE): you can use, copy, modify and distribute it for
 any purpose, with or without fee, and no attribution is required.
+
+Third-party **data** keeps its own licence, with the licence text next to it: flag SVGs
+(`src/games/flags/svg/`, MIT), map data (Natural Earth, public domain), place names (Wikidata,
+CC0), and the Word Grid bonus-word lists (`src/games/words/data/`: SCOWL for English, Slovak
+Hunspell under MPL 1.1). Word frequencies from FrequencyWords (CC BY-SA 4.0) were used to pick
+candidates for the hand-curated Word Grid lists.
 
 The **sovy.sk name** and the **Huhu owl mascot** (name and artwork: `mascotSvg()` in
 `src/platform/mascot.ts` and `public/favicon.svg`) are **not** covered by the license. If you

@@ -1,0 +1,80 @@
+.game-words { display: flex; }
+.wg { display: flex; align-items: center; justify-content: center; gap: 1.4em; width: 100%; height: 100%; padding: 0.9em 1.2em; }
+.wg.vertical { flex-direction: column; gap: 0.6em; padding: 0.6em; justify-content: flex-start; }
+.wg-loading { font-size: 1.4em; font-weight: 700; opacity: 0.7; }
+
+/* ---------- left: current word + grid ---------- */
+.wg-left { display: flex; flex-direction: column; align-items: center; gap: 0.7em; flex: none; }
+.wg-wordrow { display: flex; align-items: center; gap: 0.5em; width: 100%; }
+.wg-current {
+  flex: 1; min-width: 0; min-height: 1.7em; padding: 0.1em 0.5em;
+  font-size: 1.6em; font-weight: 800; letter-spacing: 0.08em; text-align: center; line-height: 1.5;
+  background: #fff6e9; border: 0.12em dashed #2b2440; border-radius: 0.5em;
+  white-space: nowrap; overflow: hidden;
+}
+.wg-current.empty { border-color: #c9c4d4; }
+.wg-check { min-height: 2.6em; }
+.wg.done .wg-wordrow { visibility: hidden; }
+
+.wg-grid { position: relative; width: 300px; height: 300px; flex: none; touch-action: none; user-select: none; -webkit-user-select: none; }
+.wg-tiles {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 0.22em;
+}
+.wg-tile {
+  display: flex; align-items: center; justify-content: center;
+  background: #fff; color: #2b2440; font-weight: 800; line-height: 1;
+  border: 0.07em solid #2b2440; border-radius: 0.28em; box-shadow: 0.04em 0.07em 0 #2b2440;
+  cursor: pointer; transition: background 0.12s, transform 0.12s;
+}
+.wg-tile.next { background: #fffbe8; }
+.wg-tile.on { background: #ffd23f; transform: scale(0.95); }
+.wg-tile.trace { background: #bfe3ff; }
+.wg-tile.glow { animation: wg-glow 0.9s ease-in-out infinite alternate; }
+.wg-tile.good { animation: wg-good 0.7s; }
+@keyframes wg-glow { to { background: #ffe27a; box-shadow: 0 0 0 0.09em #ff8a3d, 0.04em 0.07em 0 #2b2440; } }
+@keyframes wg-good { 30% { background: #b8f5c0; transform: scale(1.06); } }
+.wg-line { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.wg-line polyline { fill: none; stroke: #ff8a3d; stroke-width: 0.16; stroke-linecap: round; stroke-linejoin: round; opacity: 0.6; }
+.wg-line polyline.trace { stroke: #3da5ff; }
+.wg-line circle { fill: #ff8a3d; opacity: 0.6; }
+
+/* ---------- right: words to find ---------- */
+.wg-right { flex: 1; min-width: 0; max-width: 34em; height: 100%; display: flex; flex-direction: column; gap: 0.6em; min-height: 0; }
+.wg.vertical .wg-right { width: 100%; height: auto; flex: 1; }
+.wg-head { display: flex; justify-content: space-between; align-items: baseline; gap: 0.6em; flex-wrap: wrap; font-weight: 700; }
+.wg-score { font-size: 1.25em; font-weight: 800; color: #ff8a3d; white-space: nowrap; }
+
+.wg-slots { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 0.45em; font-size: 1.3em; }
+.wg-slots.small { font-size: 1.05em; gap: 0.35em; }
+.wg-slots.tiny { font-size: 0.85em; gap: 0.3em; }
+.wg-slot {
+  display: flex; gap: 0.12em; padding: 0.25em; font: inherit; font-weight: 800; color: #2b2440;
+  background: #fff; border: 0.12em solid #2b2440; border-radius: 0.5em; cursor: pointer;
+}
+.wg-slot:disabled { cursor: default; }
+.wg-slot .l {
+  display: flex; align-items: center; justify-content: center; min-width: 1.35em; height: 1.5em; padding: 0 0.1em;
+  font-size: 1.05em; border-radius: 0.25em; background: #f3effa;
+}
+.wg-slot .l.blank { background: #e6e1ef; }
+.wg-slot.found { background: #4cc95b; }
+.wg-slot.found .l { background: #fff; }
+.wg-slot.missed { border-color: #ff8a3d; border-style: dashed; }
+.wg-slot.missed .l { background: #ffe6d4; }
+
+.wg-bonus { display: flex; flex-wrap: wrap; gap: 0.35em; align-items: center; font-size: 0.9em; }
+.wg-bonus-title { font-weight: 700; opacity: 0.75; }
+.wg-bonus-word { padding: 0.1em 0.45em; border-radius: 0.4em; background: #e9e2ff; font-weight: 800; }
+
+.wg-actions { display: flex; gap: 0.6em; flex-wrap: wrap; }
+.wg-actions .btn { flex: 1; min-height: 2.6em; white-space: nowrap; }
+.wg-hint { flex: 0 1 auto !important; }
+
+@media (max-aspect-ratio: 1/1) {
+  .wg-current { font-size: 1.3em; }
+  .wg-actions .btn { min-height: 2.4em; }
+}
+.wg.vertical .wg-slots { font-size: 1em; }
+.wg.vertical .wg-slots.small { font-size: 0.85em; }
+.wg.vertical .wg-slots.tiny { font-size: 0.72em; }

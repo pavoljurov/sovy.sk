@@ -1,0 +1,17 @@
+sk-accept.txt and the spelling check of sk-target.tsv come from the Slovak Hunspell
+dictionary by the sk-spell project (https://github.com/sk-spell/hunspell-sk), as shipped in
+LibreOffice dictionaries (https://github.com/LibreOffice/dictionaries/tree/master/sk_SK).
+
+The dictionary is released under a choice of three licences:
+  * GNU General Public License (GPL) Version 2
+  * GNU Lesser General Public License (LGPL) Version 2.1
+  * Mozilla Public License (MPL) 1.1
+
+This project uses it under the Mozilla Public License 1.1
+(https://www.mozilla.org/en-US/MPL/1.1/). sk-accept.txt is a modified extract of the
+dictionary (base forms of 3–7 letters, rude words removed); it stays under the MPL 1.1.
+The original data is available at the links above.
+
+Frequency information used to pick candidate words for the hand-curated target lists
+(en-target.tsv, sk-target.tsv) came from FrequencyWords by Hermit Dave
+(https://github.com/hermitdave/FrequencyWords, CC BY-SA 4.0), based on OpenSubtitles.
