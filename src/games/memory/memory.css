@@ -1,0 +1,117 @@
+.game-memory { display: flex; align-items: stretch; }
+.mem {
+  --c: #7b5cff;
+  flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; padding: 0.7em 1em 0.8em;
+}
+.mem > * + * { margin-top: 0.6em; } /* no flex gap on old browsers */
+
+/* ---------- player count ---------- */
+.mem.mem-setup-mode { justify-content: center; align-items: center; }
+.mem-setup { display: flex; flex-direction: column; align-items: center; }
+.mem-setup-q { font-size: 1.9em; font-weight: 800; text-align: center; margin-bottom: 0.7em; }
+.mem-counts { display: grid; grid-template-columns: repeat(4, 9.5em); justify-content: center; grid-gap: 1em; gap: 1em; }
+.mem-count {
+  --b: #fff; color: #2b2440; flex-direction: column;
+  min-height: 6.5em; font-size: 1.15em; padding: 0.6em 0.5em;
+}
+.mem-count-kids { display: flex; height: 2.4em; align-items: flex-end; margin-bottom: 0.3em; }
+.mem-count-kids svg { width: 1.5em; height: 1.75em; margin: 0 0.05em; }
+
+/* ---------- top bar: pairs / misses or players ---------- */
+.mem-bar { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; flex: none; }
+.mem-bar > * { margin: 0.15em 0.35em; }
+.mem-chips { display: flex; flex-wrap: wrap; justify-content: center; }
+.mem-chip {
+  --pc: #7b5cff;
+  display: flex; align-items: center; padding: 0.2em 0.7em 0.2em 0.25em; min-height: 2.3em; margin: 0.15em 0.25em;
+  border: 0.14em solid #2b2440; border-radius: 1.2em; background: #fff;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.mem-chip > * + * { margin-left: 0.4em; }
+.mem-chip.solo { padding-left: 0.8em; background: #fff6e9; }
+.mem-chip.solo b { font-size: 1.15em; }
+.mem-chip-badge {
+  width: 1.7em; height: 1.7em; border-radius: 50%; background: var(--pc); color: #fff;
+  border: 0.12em solid #2b2440; display: flex; align-items: center; justify-content: center; font-weight: 800;
+}
+.mem-chip-name { font-weight: 800; }
+.mem-chip-score { font-size: 1.2em; min-width: 1.2em; text-align: center; }
+.mem-chip.active { background: #fff6e9; box-shadow: 0 0 0 0.22em var(--pc); transform: translateY(-0.08em) scale(1.06); }
+.mem-turn {
+  font-size: 1.15em; font-weight: 800; color: #fff; background: var(--c);
+  padding: 0.2em 0.8em; border-radius: 1em; border: 0.14em solid #2b2440;
+  -webkit-text-stroke: 0.05em #2b2440; paint-order: stroke fill;
+}
+
+/* ---------- board ---------- */
+.mem-boardwrap { position: relative; flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
+.mem-board { display: grid; justify-content: center; align-content: center; touch-action: manipulation; }
+
+.mem-card {
+  position: relative; display: block; width: 100%; height: 100%; padding: 0; margin: 0;
+  border: 0; background: none; cursor: pointer; font: inherit; color: #2b2440;
+  -webkit-perspective: 50em; perspective: 50em;
+}
+.mem-inner {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  -webkit-transform-style: preserve-3d; transform-style: preserve-3d;
+  -webkit-transition: -webkit-transform 0.35s; transition: transform 0.35s;
+}
+.mem-card.open .mem-inner { -webkit-transform: rotateY(180deg); transform: rotateY(180deg); }
+.mem-face {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  border: 0.13em solid #2b2440; border-radius: 0.6em; box-shadow: 0 0.22em 0 #2b2440;
+  -webkit-backface-visibility: hidden; backface-visibility: hidden;
+  /* Fallback for browsers with broken/no 3D: the visible face also swaps half-way through the flip. */
+  transition: visibility 0s linear 0.17s;
+}
+.mem-back {
+  background-color: var(--c);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.28) 0.12em, transparent 0.15em);
+  background-size: 0.9em 0.9em;
+  transition: visibility 0s linear 0.17s, background-color 0.3s;
+}
+.mem-back svg { width: 62%; height: 62%; }
+.mem-front { background: #fff; visibility: hidden; -webkit-transform: rotateY(180deg); transform: rotateY(180deg); }
+.mem-card.open .mem-front { visibility: visible; }
+.mem-card.open .mem-back { visibility: hidden; }
+@supports not ((transform-style: preserve-3d) or (-webkit-transform-style: preserve-3d)) {
+  .mem-card.open .mem-inner, .mem-front { -webkit-transform: none; transform: none; }
+}
+
+.mem-card.matched .mem-front { border-color: var(--mc, #4cc95b); box-shadow: 0 0 0 0.12em var(--mc, #4cc95b), 0 0.22em 0 #2b2440; }
+.mem-card.matched { cursor: default; }
+.mem-match { animation: mem-match 0.4s cubic-bezier(0.3, 1.6, 0.6, 1); }
+@keyframes mem-match { 50% { transform: scale(1.1); } }
+
+/* ---------- card faces ---------- */
+.mem-pic { width: 80%; height: 80%; }
+.mem-pic svg { width: 100%; height: 100%; }
+.g-flag .mem-front { background: #e1f1ff; }
+.g-clock .mem-front { background: #fff6d1; }
+.g-mul .mem-front { background: #e4f7e6; }
+.mem-flagbox { width: 84%; border: 0.1em solid #2b2440; border-radius: 0.2em; overflow: hidden; background: #fff; line-height: 0; }
+.mem-flag { display: block; width: 100%; height: auto; pointer-events: none; }
+.mem-name {
+  padding: 0 0.25em; text-align: center; font-weight: 800; line-height: 1.05;
+  word-wrap: break-word; overflow-wrap: break-word;
+}
+.mem-clock text { font: 800 34px 'Baloo 2', sans-serif; fill: #2b2440; text-anchor: middle; dominant-baseline: central; }
+.mem-time {
+  font-size: 1.35em; font-weight: 800; letter-spacing: 0.04em; color: #ffd23f; background: #2b2440;
+  padding: 0.05em 0.35em; border-radius: 0.3em; line-height: 1.2;
+}
+.mem-mul { font-size: 1.35em; font-weight: 800; white-space: nowrap; }
+.mem-num { font-size: 2em; font-weight: 800; color: #2b2440; }
+
+@media (max-aspect-ratio: 1/1) {
+  .mem { padding: 0.5em; }
+  .mem > * + * { margin-top: 0.4em; }
+  .mem-chip-name { display: none; }
+  .mem-chip { padding-right: 0.5em; }
+  .mem-turn { font-size: 1em; }
+  .mem-count { min-height: 5.5em; }
+  .mem-counts { grid-template-columns: repeat(2, 8.5em); }
+  .mem-setup-q { font-size: 1.5em; }
+}

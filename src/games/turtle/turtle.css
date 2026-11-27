@@ -1,0 +1,111 @@
+/* Turtle Painter. Grid/margins instead of flex `gap` and no `inset`, for old TV browsers. */
+.game-turtle { display: flex; align-items: center; justify-content: center; background: #f2fbf8; }
+.tt { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 12px; }
+.tt.vertical { flex-direction: column; justify-content: flex-start; padding: 8px 8px 10px; }
+
+/* ----- paper ----- */
+.tt-board {
+  position: relative; flex: none; margin-right: 1.4em;
+  background: #fffdf6; border: 0.16em solid #2b2440; border-radius: 0.9em; box-shadow: 0.2em 0.25em 0 #2b2440;
+}
+.vertical .tt-board { margin: 0 0 0.6em; }
+.tt-svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+.tt-dots circle { fill: #d9d2e8; }
+.tt-target line { stroke: #b4a4f4; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 0.1 2.48; }
+.tt-target line.missing { stroke: #ff8a3d; stroke-width: 3; animation: tt-pulse 0.8s ease-in-out infinite alternate; }
+.tt-start { fill: none; stroke: #1fc2ae; stroke-width: 1.3; }
+.tt-ink line { stroke: #7b5cff; stroke-width: 2.2; stroke-linecap: round; }
+.tt-ink line.extra { stroke: #ff4d5e; }
+.tt-board.won .tt-ink line { stroke: #4cc95b; transition: stroke 0.4s; }
+@keyframes tt-pulse { from { opacity: 1; } to { opacity: 0.35; } }
+
+.tt-turtle { position: absolute; left: 0; top: 0; z-index: 2; pointer-events: none; }
+.tt-turtle-inner { width: 100%; height: 100%; padding: 4%; }
+.tt-turtle-inner svg { width: 100%; height: 100%; filter: drop-shadow(0.06em 0.1em 0 rgba(43, 36, 64, 0.25)); }
+.tt-turtle.bump .tt-turtle-inner svg { animation: tt-bump 0.5s; }
+.tt-board.won .tt-turtle-inner svg { animation: hop 0.5s cubic-bezier(0.3, 1.5, 0.6, 1) 3; }
+@keyframes tt-bump {
+  35% { transform: translateY(-22%); }
+  55% { transform: translateY(5%) rotate(-10deg); }
+  75% { transform: rotate(8deg); }
+}
+
+/* ----- panel ----- */
+.tt-panel {
+  display: grid; grid-gap: 0.7em; gap: 0.7em; grid-template-columns: minmax(0, 1fr);
+  flex: 1; min-width: 0; max-width: 25em;
+}
+.vertical .tt-panel {
+  width: 100%; max-width: none; min-height: 0; grid-gap: 0.45em; gap: 0.45em;
+  grid-template-rows: auto minmax(2.9em, 1fr) auto auto;
+}
+.tt-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; font-size: 1.05em; }
+.tt-pic { margin-right: 0.5em; }
+.tt-shape { color: #178f80; }
+.tt-counter {
+  background: #fff; border: 0.12em solid #2b2440; border-radius: 1em; padding: 0 0.6em; font-size: 0.9em; white-space: nowrap;
+}
+.tt-counter.full { background: #ffd23f; }
+
+.tt-program-box {
+  background: #fff; border: 0.14em solid #2b2440; border-radius: 1em; padding: 0.3em;
+  min-height: 6.4em; max-height: 13em; overflow-y: auto; -webkit-overflow-scrolling: touch;
+}
+.vertical .tt-program-box { min-height: 0; max-height: none; }
+.tt-program { display: flex; flex-wrap: wrap; align-items: center; align-content: flex-start; min-height: 100%; }
+.tt-empty { opacity: 0.45; padding: 0.5em; pointer-events: none; }
+.tt-caret {
+  display: inline-block; flex: none; width: 0.32em; height: 2.3em; margin: 0.15em 0.1em; border-radius: 0.2em;
+  background: #ff8a3d; animation: tt-blink 1s steps(2, start) infinite;
+}
+@keyframes tt-blink { to { visibility: hidden; } }
+
+.tt-chip {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  height: 2.5em; min-width: 2.5em; margin: 0.15em; padding: 0.2em 0.3em;
+  border-radius: 0.6em; border: 0.12em solid #2b2440; background: #7b5cff; color: #fff;
+  font: inherit; font-weight: 800; cursor: pointer; transition: transform 0.15s;
+}
+.tt-chip svg { width: 1.7em; height: 1.7em; flex: none; }
+.tt-chip b { font-size: 1.25em; margin-left: 0.1em; line-height: 1; }
+.tt-chip.turn { background: #ff8a3d; }
+.tt-chip.rep, .tt-chip.rep-end { background: #1fc2ae; }
+.tt-chip.rep-end { min-width: 1.7em; padding: 0.2em 0; }
+.tt-chip.rep-end svg { width: 1.3em; }
+.tt-chip.cur { box-shadow: 0 0 0 0.16em #fff, 0 0 0 0.34em #ff8a3d; }
+.tt-chip.active { background: #ffd23f; color: #2b2440; transform: scale(1.15); }
+
+.tt-group {
+  display: inline-flex; flex-wrap: wrap; align-items: center; max-width: 100%;
+  margin: 0.15em; padding: 0.05em; border: 0.14em solid #1fc2ae; border-radius: 0.8em; background: #defaf4;
+}
+.tt-group.d1 { border-color: #ff5d8f; background: #ffe8ef; }
+.tt-group.d1 > .tt-chip.rep, .tt-group.d1 > .tt-chip.rep-end { background: #ff5d8f; }
+.tt-group.open { border-style: dashed; border-width: 0.18em; }
+
+.tt-palette { display: grid; grid-gap: 0.45em; gap: 0.45em; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.tt-palette.n5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.tt-pal {
+  flex-direction: column; min-width: 0; min-height: 4em; padding: 0.25em 0.15em; color: #fff;
+}
+.tt-pal-icon { display: block; width: 1.9em; height: 1.9em; }
+.tt-pal-icon svg { width: 100%; height: 100%; }
+.tt-pal-label { display: block; font-size: 0.72em; line-height: 1.1; white-space: nowrap; overflow: hidden; max-width: 100%; }
+.tt-pal.turn { --b: #ff8a3d; }
+.tt-pal.rep, .tt-pal.end { --b: #1fc2ae; }
+
+.tt-tools { display: grid; grid-gap: 0.45em; gap: 0.45em; grid-template-columns: 2.6em 2.6em 2.6em 2.6em minmax(0, 1fr); }
+.tt-step, .tt-tool { padding: 0; font-size: 1.25em; width: 100%; min-height: 2.1em; color: #fff; }
+.tt-tool svg { width: 1.2em; height: 1.2em; }
+.tt-tool.confirm { --b: #ff4d5e; }
+.tt-run svg { width: 1.1em; height: 1.1em; margin-right: 0.3em; flex: none; }
+.tt-step { --b: #fff; color: #2b2440; font-size: 1.6em; min-height: 1.63em; }
+.tt-run { padding: 0.2em 0.4em; min-width: 0; white-space: nowrap; }
+.tt-run.fast { --b: #ffd23f; color: #2b2440; }
+
+.vertical .tt-pal { min-height: 3.1em; padding: 0.15em; }
+.vertical .tt-pal-icon { width: 1.5em; height: 1.5em; }
+.vertical .tt-pal-label { font-size: 0.66em; }
+.vertical .tt-chip { height: 2.2em; min-width: 2.2em; margin: 0.1em; }
+.vertical .tt-chip svg { width: 1.5em; height: 1.5em; }
+.vertical .tt-caret { height: 2em; margin: 0.1em; }
